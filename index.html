@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speedy Friends: Distance Adventures</title>
+<title>Math Adventures</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Math Adventures">
+<meta name="theme-color" content="#4da3e8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -13,12 +20,8 @@
     --pink-deep: #4da3e8;
     --lav: #dbeeff;
     --lav-deep: #2f6fb0;
-    --mint: #c8f5e0;
-    --yellow: #eaf6ff;
     --text: #234b6b;
     --card: #f5fbff;
-    --good: #45b877;
-    --bad: #ff7a9c;
     --shadow: 0 8px 0 rgba(70, 150, 210, 0.35);
   }
   * { box-sizing: border-box; }
@@ -98,208 +101,59 @@
     text-align: center;
     color: var(--text);
     font-weight: 600;
-    margin: 0 0 24px;
+    margin: 0 0 28px;
   }
   .mascot-row {
     text-align: center;
     font-size: 2.4rem;
     margin-bottom: 10px;
   }
-  .card {
+  .topic-grid {
+    display: grid;
+    gap: 18px;
+  }
+  .topic-card {
+    display: block;
     background: var(--card);
     border: 3px solid #fff;
     outline: 3px solid var(--pink-deep);
     border-radius: 26px;
-    padding: 26px 24px 30px;
-    margin-bottom: 22px;
+    padding: 22px 24px;
     box-shadow: var(--shadow);
-  }
-  .card h2 {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.3rem;
-    margin: 0 0 12px;
-    color: #2f7fd1;
-  }
-  .formula-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.6rem;
-    font-weight: 700;
-    padding: 16px;
-    background: var(--yellow);
-    border-radius: 18px;
-    margin-bottom: 12px;
-    border: 2px dashed var(--pink-deep);
-  }
-  .formula-box span.op { color: #b98a3a; font-weight: 400; }
-  p { margin: 0 0 10px; }
-
-  /* Progress bar */
-  .progress-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-  .progress-label {
-    font-weight: 700;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    color: #2f7fd1;
-  }
-  .progress-track {
-    flex: 1;
-    height: 14px;
-    background: #f3dcf7;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 2px solid #fff;
-  }
-  .progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--pink-deep), var(--lav-deep));
-    border-radius: 10px;
-    transition: width 0.4s ease;
-  }
-
-  .problem-text {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin-bottom: 18px;
-    line-height: 1.5;
-  }
-  .answer-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  input[type="number"] {
-    flex: 1;
-    padding: 12px 14px;
-    border-radius: 14px;
-    border: 2px solid var(--pink-deep);
-    background: #fff;
+    text-decoration: none;
     color: var(--text);
-    font-size: 1.1rem;
-    font-weight: 700;
-    font-family: 'Nunito', sans-serif;
+    transition: transform 0.15s ease;
   }
-  input[type="number"]:focus { outline: 3px solid var(--lav-deep); }
-  input[type="number"]:disabled { opacity: 0.6; }
-  .unit-tag {
-    font-weight: 700;
-    color: #2f7fd1;
-    white-space: nowrap;
-  }
-  button {
-    appearance: none;
-    border: none;
-    background: linear-gradient(180deg, #8ec9ff, var(--pink-deep));
-    color: #7a2f57;
+  .topic-card:hover { transform: translateY(-3px); }
+  .topic-card .emoji { font-size: 2rem; margin-bottom: 8px; }
+  .topic-card h2 {
     font-family: 'Baloo 2', cursive;
-    font-size: 1.05rem;
+    font-size: 1.25rem;
+    margin: 0 0 6px;
+    color: #1f6fb8;
+  }
+  .topic-card p { margin: 0; font-weight: 600; }
+  .topic-card.coming-soon {
+    opacity: 0.6;
+    outline-style: dashed;
+    pointer-events: none;
+  }
+  .topic-card.coming-soon .tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    background: var(--lav);
+    color: var(--lav-deep);
+    padding: 3px 10px;
+    border-radius: 10px;
     font-weight: 700;
-    padding: 12px 22px;
-    border-radius: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #1f6fb8;
   }
-  button:active { transform: translateY(2px); box-shadow: 0 2px 0 #1f6fb8; }
-  button:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
-  button.secondary {
-    background: linear-gradient(180deg, #dbeeff, var(--lav-deep));
-    box-shadow: 0 4px 0 #1f5e9c;
-    color: #163a5c;
-  }
-  button.secondary:active { box-shadow: 0 2px 0 #1f5e9c; }
-
-  .feedback {
-    font-weight: 700;
-    margin-top: 10px;
-    min-height: 1.4em;
-  }
-  .feedback.incorrect { color: var(--bad); }
-
-  .score-line {
-    text-align: center;
-    font-weight: 700;
-    color: #2f7fd1;
-    margin-bottom: 6px;
-  }
-
-  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-  th, td { text-align: left; padding: 8px 6px; border-bottom: 2px dotted #f3c6de; }
-  th { color: #2f7fd1; font-weight: 700; }
-
   footer {
     text-align: center;
-    color: #2f7fd1;
+    color: #1f6fb8;
     font-size: 0.85rem;
     margin-top: 28px;
     font-weight: 600;
-  }
-
-  /* Popup modal */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(140, 80, 130, 0.35);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    padding: 20px;
-  }
-  .overlay.show { display: flex; }
-  .modal {
-    background: var(--card);
-    border-radius: 28px;
-    border: 4px solid var(--pink-deep);
-    padding: 32px 28px;
-    max-width: 380px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 12px 0 rgba(70,150,210,0.4);
-    animation: pop 0.35s ease;
-  }
-  @keyframes pop {
-    0% { transform: scale(0.6); opacity: 0; }
-    70% { transform: scale(1.08); opacity: 1; }
-    100% { transform: scale(1); }
-  }
-  .modal .big-emoji {
-    font-size: 3.2rem;
-    margin-bottom: 8px;
-  }
-  .modal h3 {
-    font-family: 'Baloo 2', cursive;
-    color: #1f6fb8;
-    font-size: 1.5rem;
-    margin: 0 0 6px;
-  }
-  .modal p { color: var(--text); font-weight: 600; margin-bottom: 18px; }
-
-  /* End screen */
-  .end-screen { text-align: center; display: none; }
-  .end-screen.show { display: block; }
-  .end-emoji { font-size: 3rem; }
-
-  /* Confetti bits */
-  .confetti {
-    position: fixed;
-    top: -20px;
-    font-size: 1.4rem;
-    z-index: 60;
-    animation: fall linear forwards;
-    pointer-events: none;
-  }
-  @keyframes fall {
-    to { transform: translateY(105vh) rotate(360deg); opacity: 0.9; }
   }
 </style>
 </head>
@@ -311,244 +165,32 @@
 <div class="cloud cloud5"></div>
 <div class="wrap">
   <div class="mascot-row">🐰🎀🐱🩵🐹</div>
-  <h1>Speedy Friends: Distance Adventures!</h1>
-  <p class="subtitle">Help our friends figure out how far, how fast, or how long their trip takes!</p>
+  <h1>Math Adventures</h1>
+  <p class="subtitle">Pick a topic to practice!</p>
 
-  <div class="card">
-    <h2>✨ The Magic Formula ✨</h2>
-    <div class="formula-box">
-      <span>distance</span><span class="op">=</span><span>rate</span><span class="op">×</span><span>time</span>
-    </div>
-    <p><strong>Distance</strong> is how far you go. <strong>Rate</strong> is your speed. <strong>Time</strong> is how long you travel. If you know two of them, you can always find the third one — just multiply or divide!</p>
-    <table>
-      <tr><th>You know</th><th>Find</th><th>Do this</th></tr>
-      <tr><td>rate &amp; time</td><td>distance</td><td>multiply them</td></tr>
-      <tr><td>distance &amp; time</td><td>rate</td><td>divide distance ÷ time</td></tr>
-      <tr><td>distance &amp; rate</td><td>time</td><td>divide distance ÷ rate</td></tr>
-    </table>
-  </div>
+  <div class="topic-grid">
+    <a class="topic-card" href="distance.html">
+      <div class="emoji">🚗</div>
+      <h2>Distance = Rate × Time</h2>
+      <p>Word problems about speed, time, and how far things travel.</p>
+    </a>
 
-  <div class="card" id="quizCard">
-    <h2>🌟 Word Problems 🌟</h2>
-    <div class="progress-wrap">
-      <span class="progress-label" id="progressLabel">Problem 1 of 10</span>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-    <div class="score-line">⭐ Score: <span id="score">0</span> / <span id="attempts">0</span> ⭐</div>
-
-    <div id="quizBody">
-      <div class="problem-text" id="problemText"></div>
-      <div class="answer-row">
-        <input type="number" id="quizAnswer" placeholder="Your answer">
-        <span class="unit-tag" id="unitTag"></span>
-      </div>
-      <button onclick="checkAnswer()" id="checkBtn">Check My Answer 💙</button>
-      <div class="feedback" id="feedback"></div>
-    </div>
-
-    <div class="end-screen" id="endScreen">
-      <div class="end-emoji" id="endEmoji">🎉</div>
-      <h2 id="endTitle">All done!</h2>
-      <p id="endMessage"></p>
-      <button class="secondary" onclick="restartQuiz()">Play Again 🔁</button>
+    <div class="topic-card coming-soon">
+      <div class="emoji">📐</div>
+      <h2>Area</h2>
+      <p>Word problems about calculating area.</p>
+      <span class="tag">Coming soon</span>
     </div>
   </div>
 
   <footer>Made with 💙 for math adventurers everywhere.</footer>
 </div>
-
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <div class="big-emoji" id="modalEmoji">🎉</div>
-    <h3 id="modalTitle">Yay! Correct!</h3>
-    <p id="modalMessage"></p>
-    <button onclick="nextProblem()" id="nextBtn">Next Problem ➡️</button>
-  </div>
-</div>
-
 <script>
-// ---- Fixed set of 10 kid-friendly word problems ----
-const problems = [
-  { text: "A high-speed train travels at 180 miles per hour. How far does it travel in 45 minutes? (Hint: first find how many miles it travels in just 1 minute, then multiply by 45.)", answer: 135, unit: "miles" },
-  { text: "Elena bikes 30 miles at 10 mph, then bikes the last 10 miles at 5 mph to cool down. What is her average speed for the entire 40-mile ride? (Average speed = total distance ÷ total time — find each leg's time first.)", answer: 8, unit: "mph" },
-  { text: "Two bike riders start 20 miles apart and ride toward each other. One rides 6 mph, the other 4 mph. How many hours until they meet? (Hint: add their speeds together first.)", answer: 2, unit: "hours" },
-  { text: "A bus leaves the terminal at 40 mph. One hour later, a car leaves the same terminal on the same road at 60 mph. How many hours after the car leaves does it catch up to the bus? (Hint: find the bus's head-start distance first.)", answer: 2, unit: "hours" },
-  { text: "Marcus bikes to the lake at 10 mph. It takes him 2 hours to get there. He bikes back home along the same path. What is the total round-trip distance, in miles? (Hint: find the one-way distance first, then double it.)", answer: 40, unit: "miles" },
-  { text: "On a road trip, Priya drives the first 150 miles at 50 mph. She wants the entire 300-mile trip to take 5 hours total. How fast must she drive for the remaining 150 miles? (Hint: find the time used so far first.)", answer: 75, unit: "mph" },
-  { text: "A snail crawls at 2 feet per hour. How many minutes will it take the snail to crawl 6 feet? (Hint: find the time in hours first, then convert to minutes.)", answer: 180, unit: "minutes" },
-  { text: "A cargo ship travels 20 mph in still water. Going downstream, a 5 mph current adds to its speed. How many miles does it cover in 3 hours going downstream? (Hint: find the actual downstream speed first.)", answer: 75, unit: "miles" },
-  { text: "That same ship now heads back upstream against the 5 mph current, covering the same 75 miles. How many hours does the return trip take? (Hint: find the upstream speed first.)", answer: 5, unit: "hours" },
-  { text: "Jenna's average running pace is 1 mile every 8 minutes. At that pace, how many miles can she run in 2 hours? (Hint: convert 2 hours to minutes first.)", answer: 15, unit: "miles" }
-];
-
-let currentIndex = 0;
-let score = 0;
-let attempts = 0;
-
-const celebrationEmojis = ["🎉", "🌟", "💙", "🦄", "🎀", "✨", "🩵", "🐰"];
-const celebrationMessages = [
-  "You did it! You're a math superstar!",
-  "Amazing job! Keep it up!",
-  "Wow, so speedy and so smart!",
-  "Great work! On to the next adventure!",
-  "You solved it perfectly!"
-];
-
-function loadProblem() {
-  const p = problems[currentIndex];
-  document.getElementById('problemText').textContent = p.text;
-  document.getElementById('unitTag').textContent = p.unit;
-  const input = document.getElementById('quizAnswer');
-  input.value = '';
-  input.disabled = false;
-  document.getElementById('checkBtn').disabled = false;
-  const feedback = document.getElementById('feedback');
-  feedback.textContent = '';
-  feedback.className = 'feedback';
-  document.getElementById('progressLabel').textContent = `Problem ${currentIndex + 1} of ${problems.length}`;
-  document.getElementById('progressFill').style.width = `${(currentIndex / problems.length) * 100}%`;
-  input.focus();
-}
-
-function checkAnswer() {
-  const p = problems[currentIndex];
-  const input = document.getElementById('quizAnswer');
-  const userAnswer = parseFloat(input.value);
-  const feedback = document.getElementById('feedback');
-
-  if (isNaN(userAnswer)) {
-    feedback.textContent = "Type a number first! 🙂";
-    feedback.className = 'feedback incorrect';
-    return;
-  }
-
-  attempts++;
-  document.getElementById('attempts').textContent = attempts;
-
-  if (Math.abs(userAnswer - p.answer) < 0.01) {
-    score++;
-    document.getElementById('score').textContent = score;
-    input.disabled = true;
-    document.getElementById('checkBtn').disabled = true;
-    feedback.textContent = '';
-    showCelebration(p);
-  } else {
-    feedback.textContent = "Not quite — try again! 💪";
-    feedback.className = 'feedback incorrect';
-  }
-}
-
-const praisePhrases = [
-  "You did it!", "Great job!", "Awesome work!", "Way to go!",
-  "You got it!", "Fantastic!", "Nice job!", "Super job!",
-  "Excellent!", "You're a star!"
-];
-
-function playChime() {
-  try {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    const ctx = new Ctx();
-    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6 - happy little arpeggio
-    let t = ctx.currentTime;
-    notes.forEach((freq) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(t);
-      osc.stop(t + 0.3);
-      t += 0.13;
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* offline caching unavailable, ignore */ });
     });
-  } catch (e) { /* audio not available, ignore */ }
-}
-
-function speakPraise() {
-  try {
-    if (!('speechSynthesis' in window)) return null;
-    const phrase = praisePhrases[Math.floor(Math.random() * praisePhrases.length)];
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(phrase);
-    utter.rate = 1.0;
-    utter.pitch = 1.35;
-    window.speechSynthesis.speak(utter);
-    return phrase;
-  } catch (e) { return null; }
-}
-
-function showCelebration(p) {
-  const emoji = celebrationEmojis[Math.floor(Math.random() * celebrationEmojis.length)];
-  const msg = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
-  playChime();
-  const spoken = speakPraise();
-  document.getElementById('modalEmoji').textContent = emoji;
-  document.getElementById('modalTitle').textContent = spoken || 'Yay! Correct!';
-  document.getElementById('modalMessage').textContent = `${msg} The answer was ${p.answer} ${p.unit}.`;
-  document.getElementById('overlay').classList.add('show');
-  launchConfetti();
-}
-
-function launchConfetti() {
-  const pieces = ["🎀","💙","⭐","☁️","✨","🎉"];
-  for (let i = 0; i < 18; i++) {
-    const el = document.createElement('div');
-    el.className = 'confetti';
-    el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.animationDuration = (2 + Math.random() * 1.5) + 's';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4000);
   }
-}
-
-function nextProblem() {
-  document.getElementById('overlay').classList.remove('show');
-  currentIndex++;
-  if (currentIndex >= problems.length) {
-    finishQuiz();
-  } else {
-    loadProblem();
-  }
-}
-
-function finishQuiz() {
-  document.getElementById('progressFill').style.width = '100%';
-  document.getElementById('progressLabel').textContent = `Problem ${problems.length} of ${problems.length}`;
-  document.getElementById('quizBody').style.display = 'none';
-  const endScreen = document.getElementById('endScreen');
-  endScreen.classList.add('show');
-  const pct = Math.round((score / problems.length) * 100);
-  let emoji = "🎉";
-  let title = "All done!";
-  if (pct === 100) { emoji = "🏆"; title = "Perfect score!"; }
-  else if (pct >= 70) { emoji = "🌟"; title = "Great job!"; }
-  else { emoji = "💪"; title = "Nice try!"; }
-  document.getElementById('endEmoji').textContent = emoji;
-  document.getElementById('endTitle').textContent = title;
-  document.getElementById('endMessage').textContent = `You got ${score} out of ${problems.length} correct!`;
-  launchConfetti();
-}
-
-function restartQuiz() {
-  currentIndex = 0;
-  score = 0;
-  attempts = 0;
-  document.getElementById('score').textContent = 0;
-  document.getElementById('attempts').textContent = 0;
-  document.getElementById('quizBody').style.display = 'block';
-  document.getElementById('endScreen').classList.remove('show');
-  loadProblem();
-}
-
-document.getElementById('quizAnswer').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !this.disabled) checkAnswer();
-});
-
-loadProblem();
 </script>
 </body>
 </html>
