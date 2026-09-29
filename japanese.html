@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nihongo Adventures</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Math Adventures">
+<meta name="theme-color" content="#4da3e8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #cfe8ff;
+    --pink-deep: #4da3e8;
+    --lav: #dbeeff;
+    --lav-deep: #2f6fb0;
+    --mint: #c8f5e0;
+    --yellow: #eaf6ff;
+    --text: #234b6b;
+    --card: #f5fbff;
+    --good: #45b877;
+    --bad: #ff7a9c;
+    --heading: #1f6fb8;
+    --label: #2f7fd1;
+    --bg1: #eaf8ff;
+    --bg2: #b7e6ff;
+    --bg3: #7cc9f5;
+    --shadow: 0 8px 0 rgba(70, 150, 210, 0.35);
+  }
+  body[data-theme="sunset"] {
+    --pink: #ffe1cf; --pink-deep: #f2935a; --lav: #ffd9ec; --lav-deep: #d1548f;
+    --yellow: #fff1e0; --text: #6b3a23; --card: #fff8f2; --heading: #d1548f; --label: #c76a2e;
+    --bg1: #fff3ea; --bg2: #ffd9b8; --bg3: #ffb488; --shadow: 0 8px 0 rgba(230, 140, 70, 0.35);
+  }
+  body[data-theme="galaxy"] {
+    --pink: #e0d4ff; --pink-deep: #8a5fe0; --lav: #d8c9ff; --lav-deep: #5b3fa8;
+    --yellow: #efe6ff; --text: #33245c; --card: #f7f3ff; --heading: #5b3fa8; --label: #6d4bc7;
+    --bg1: #efe6ff; --bg2: #c9b3f5; --bg3: #8f6fe0; --shadow: 0 8px 0 rgba(140, 100, 220, 0.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 24px 16px 64px;
+    background: radial-gradient(circle at 20% 10%, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%);
+    background-attachment: fixed; color: var(--text); font-family: 'Nunito', sans-serif;
+    position: relative; overflow-x: hidden; transition: background 0.4s ease;
+  }
+  .cloud { position: fixed; background: #ffffff; border-radius: 100px; opacity: 0.92; z-index: 0; pointer-events: none; animation: drift ease-in-out infinite alternate; }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: #ffffff; border-radius: 50%; }
+  .cloud1 { width: 130px; height: 42px; top: 6%; left: 6%; animation-duration: 26s; }
+  .cloud1::before { width: 62px; height: 62px; top: -32px; left: 14px; }
+  .cloud1::after { width: 48px; height: 48px; top: -20px; left: 58px; }
+  .cloud2 { width: 95px; height: 32px; top: 14%; left: 68%; animation-duration: 34s; }
+  .cloud2::before { width: 46px; height: 46px; top: -22px; left: 10px; }
+  .cloud2::after { width: 38px; height: 38px; top: -16px; left: 42px; }
+  .cloud3 { width: 150px; height: 46px; top: 40%; left: -6%; animation-duration: 40s; }
+  .cloud3::before { width: 72px; height: 72px; top: -36px; left: 20px; }
+  .cloud3::after { width: 56px; height: 56px; top: -24px; left: 66px; }
+  .cloud4 { width: 105px; height: 34px; top: 68%; left: 78%; animation-duration: 30s; }
+  .cloud4::before { width: 50px; height: 50px; top: -24px; left: 12px; }
+  .cloud4::after { width: 42px; height: 42px; top: -18px; left: 44px; }
+  .cloud5 { width: 80px; height: 28px; top: 85%; left: 20%; animation-duration: 22s; }
+  .cloud5::before { width: 40px; height: 40px; top: -20px; left: 8px; }
+  .cloud5::after { width: 32px; height: 32px; top: -14px; left: 34px; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(45px); } }
+  body::before {
+    content: "🎌 ✨ 🌸 ⭐ 🍡 ✨ 🎌 ⭐ 🌸 🍡 ✨ 🎌 ⭐";
+    position: fixed; inset: 0; font-size: 22px; letter-spacing: 40px; line-height: 90px;
+    opacity: 0.15; z-index: 0; pointer-events: none; word-break: break-all; overflow: hidden;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+  h1 {
+    font-family: 'Baloo 2', cursive; font-size: 2rem; text-align: center; margin: 0 0 4px;
+    color: var(--heading); text-shadow: 2px 2px 0 #fff;
+  }
+  .subtitle { text-align: center; color: var(--text); font-weight: 600; margin: 0 0 24px; }
+  .back-link { display: inline-block; margin-bottom: 14px; color: var(--heading); font-weight: 700; text-decoration: none; font-family: 'Baloo 2', cursive; }
+  .back-link:hover { text-decoration: underline; }
+  .mascot-row { text-align: center; font-size: 2.4rem; margin-bottom: 10px; }
+  .card {
+    background: var(--card); border: 3px solid #fff; outline: 3px solid var(--pink-deep);
+    border-radius: 26px; padding: 26px 24px 30px; margin-bottom: 22px; box-shadow: var(--shadow);
+  }
+  .card h2 { font-family: 'Baloo 2', cursive; font-size: 1.3rem; margin: 0 0 12px; color: var(--label); }
+  p { margin: 0 0 10px; }
+
+  /* Mode select */
+  .mode-grid { display: grid; gap: 16px; }
+  .mode-card {
+    display: block; text-align: left; width: 100%; background: var(--card);
+    border: 3px solid #fff; outline: 3px solid var(--pink-deep); border-radius: 22px;
+    padding: 18px 20px; cursor: pointer; box-shadow: var(--shadow); color: var(--text);
+    font-family: 'Nunito', sans-serif;
+  }
+  .mode-card:active { transform: translateY(2px); }
+  .mode-card .mode-emoji { font-size: 1.8rem; margin-bottom: 6px; }
+  .mode-card h3 { font-family: 'Baloo 2', cursive; margin: 0 0 4px; color: var(--heading); font-size: 1.15rem; }
+  .mode-card p { margin: 0; font-weight: 600; font-size: 0.92rem; }
+
+  /* Progress bar */
+  .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .progress-label { font-weight: 700; font-size: 0.9rem; white-space: nowrap; color: var(--label); }
+  .progress-track { flex: 1; height: 14px; background: #f3dcf7; border-radius: 10px; overflow: hidden; border: 2px solid #fff; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--pink-deep), var(--lav-deep)); border-radius: 10px; transition: width 0.4s ease; }
+
+  .score-line { text-align: center; font-weight: 700; color: var(--label); margin-bottom: 6px; }
+
+  .quiz-mode-tag {
+    display: inline-block; font-size: 0.8rem; font-weight: 700; color: var(--label);
+    background: var(--lav); padding: 3px 10px; border-radius: 10px; margin-bottom: 10px;
+  }
+
+  .jp-prompt {
+    font-family: 'Noto Sans JP', 'Baloo 2', sans-serif;
+    font-size: 3.4rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--heading);
+    margin: 6px 0 6px;
+    line-height: 1.2;
+  }
+  .jp-prompt.small { font-size: 1.5rem; }
+  .jp-romaji-hint { text-align: center; color: var(--label); font-size: 0.85rem; font-weight: 600; margin-bottom: 16px; }
+  .jp-translation { text-align: center; color: var(--text); font-size: 0.9rem; font-style: italic; margin-bottom: 18px; }
+
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 480px) { .choice-grid { grid-template-columns: 1fr; } }
+  .choice-btn {
+    appearance: none; border: none; background: linear-gradient(180deg, #8ec9ff, var(--pink-deep));
+    color: #7a2f57; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 700;
+    padding: 14px 12px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 0 var(--heading);
+  }
+  .choice-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--heading); }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct { background: linear-gradient(180deg, #8de8b0, var(--good)); color: #14512c; box-shadow: 0 4px 0 #2e7d4f; }
+  .choice-btn.incorrect { background: linear-gradient(180deg, #ffb0c2, var(--bad)); color: #6b1230; box-shadow: 0 4px 0 #c23a5c; }
+  .choice-btn.dim { opacity: 0.55; }
+
+  .quiz-note {
+    background: var(--yellow); border: 2px dashed var(--pink-deep); border-radius: 14px;
+    padding: 12px 14px; margin-top: 6px; margin-bottom: 14px; font-size: 0.92rem; color: var(--text);
+    display: none; animation: fadeInSoft 0.3s ease;
+  }
+  .quiz-note.show { display: block; }
+  @keyframes fadeInSoft { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  button {
+    appearance: none; border: none; background: linear-gradient(180deg, #8ec9ff, var(--pink-deep));
+    color: #7a2f57; font-family: 'Baloo 2', cursive; font-size: 1.05rem; font-weight: 700;
+    padding: 12px 22px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 0 var(--heading);
+  }
+  button:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--heading); }
+  button:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
+  button.secondary { background: linear-gradient(180deg, #dbeeff, var(--lav-deep)); box-shadow: 0 4px 0 #1f5e9c; color: #163a5c; }
+  button.secondary:active { box-shadow: 0 2px 0 #1f5e9c; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 2px dotted #f3c6de; }
+  th { color: var(--label); font-weight: 700; }
+
+  footer { text-align: center; color: var(--label); font-size: 0.85rem; margin-top: 28px; font-weight: 600; }
+
+  /* Gem collection */
+  .gem-hint { font-size: 0.9rem; color: var(--lav-deep); margin-bottom: 14px; }
+  .gem-case { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; padding: 10px; background: var(--lav); border-radius: 14px; border: 2px dashed var(--lav-deep); margin-bottom: 12px; }
+  .gem-case .gem { font-size: 1.6rem; animation: gemIn 0.3s ease; }
+  @keyframes gemIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .gem-placeholder { font-size: 0.85rem; color: var(--lav-deep); font-weight: 600; align-self: center; }
+  .collection-stats { font-size: 0.9rem; font-weight: 700; color: var(--label); margin: 0; }
+
+  .shop-divider { height: 2px; background: repeating-linear-gradient(90deg, var(--lav-deep) 0 8px, transparent 8px 16px); opacity: 0.5; margin: 18px 0 16px; }
+  .theme-shop { display: flex; flex-wrap: wrap; gap: 12px; }
+  .theme-swatch {
+    flex: 1; min-width: 110px; border-radius: 16px; padding: 12px 10px; text-align: center;
+    border: 3px solid transparent; cursor: pointer; font-weight: 700; font-size: 0.85rem;
+    color: var(--text); background: var(--card); box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+  }
+  .theme-swatch:active { transform: translateY(2px); box-shadow: none; }
+  .theme-swatch.active { border-color: var(--good); }
+  .theme-swatch.locked { opacity: 0.85; }
+  .theme-swatch .swatch-preview { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+  .theme-swatch .swatch-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
+  .theme-swatch .swatch-cost { display: block; margin-top: 4px; font-size: 0.78rem; font-weight: 600; opacity: 0.85; }
+
+  .gem-banner { background: var(--yellow); border: 2px dashed var(--pink-deep); border-radius: 14px; padding: 10px 12px; margin-bottom: 16px; }
+  .gem-banner .gem-earned { font-size: 2.2rem; animation: gemIn 0.4s ease; }
+  .gem-banner p { margin: 4px 0 0; font-weight: 700; font-size: 0.9rem; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(140, 80, 130, 0.35); display: none; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
+  .overlay.show { display: flex; }
+  .modal { background: var(--card); border-radius: 28px; border: 4px solid var(--pink-deep); padding: 32px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 12px 0 rgba(70,150,210,0.4); animation: pop 0.35s ease; }
+  @keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+  .modal .big-emoji { font-size: 3.2rem; margin-bottom: 8px; display: inline-block; animation: bounceEmoji 0.7s ease infinite; }
+  @keyframes bounceEmoji { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(4deg); } }
+  .modal h3 { font-family: 'Baloo 2', cursive; color: var(--heading); font-size: 1.5rem; margin: 0 0 6px; }
+  .modal p { color: var(--text); font-weight: 600; margin-bottom: 18px; }
+
+  .end-screen { text-align: center; display: none; }
+  .end-screen.show { display: block; }
+  .end-emoji { font-size: 3rem; }
+
+  .confetti { position: fixed; top: -20px; font-size: 1.4rem; z-index: 60; animation: fall linear forwards; pointer-events: none; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(360deg); opacity: 0.9; } }
+</style>
+</head>
+<body>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+<div class="cloud cloud4"></div>
+<div class="cloud cloud5"></div>
+<div class="wrap">
+  <a href="index.html" class="back-link">← All Topics</a>
+  <div class="mascot-row">🎌🌸✨🍡🎏</div>
+  <h1>Nihongo Adventures!</h1>
+  <p class="subtitle">Katakana, dates, and particles — pick a review to practice!</p>
+
+  <div class="card" id="modeSelectCard">
+    <h2>🎯 Choose a Review</h2>
+    <div class="mode-grid">
+      <button class="mode-card" onclick="startMode('katakana')">
+        <div class="mode-emoji">ア</div>
+        <h3>Katakana</h3>
+        <p>Match the katakana character to its sound.</p>
+      </button>
+      <button class="mode-card" onclick="startMode('dates')">
+        <div class="mode-emoji">📅</div>
+        <h3>Days of the Month</h3>
+        <p>Practice date readings — extra rounds on the 4th, 8th &amp; 20th!</p>
+      </button>
+      <button class="mode-card" onclick="startMode('particles')">
+        <div class="mode-emoji">✏️</div>
+        <h3>Particles</h3>
+        <p>Pick the right は・が・を・に・で and more to complete the sentence.</p>
+      </button>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard" style="display:none;">
+    <span class="quiz-mode-tag" id="quizModeTag">Katakana</span>
+    <div class="progress-wrap">
+      <span class="progress-label" id="progressLabel">Question 1 of 10</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="score-line">⭐ Score: <span id="score">0</span> / <span id="attempts">0</span> ⭐</div>
+
+    <div id="quizBody">
+      <div class="jp-prompt" id="jpPrompt"></div>
+      <div class="jp-romaji-hint" id="jpRomajiHint"></div>
+      <div class="jp-translation" id="jpTranslation"></div>
+      <div class="choice-grid" id="choiceGrid"></div>
+      <div class="quiz-note" id="quizNote"></div>
+      <button id="nextQBtn" onclick="nextQuestion()" style="display:none;">Next ➡️</button>
+    </div>
+
+    <div class="end-screen" id="endScreen">
+      <div class="end-emoji" id="endEmoji">🎉</div>
+      <h2 id="endTitle">All done!</h2>
+      <p id="endMessage"></p>
+      <button onclick="retryMode()">Try Again 🔁</button>
+      <button class="secondary" onclick="showModeSelect()">Choose Another Review</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎒 My Gem Collection</h2>
+    <p class="gem-hint">Get 3 right in a row to earn a gem! (Shared across every topic.)</p>
+    <div class="gem-case" id="gemCase"></div>
+    <p class="collection-stats">Gems collected: <span id="gemCount">0</span> &nbsp;|&nbsp; Best streak: <span id="bestStreak">0</span> 🔥</p>
+
+    <div class="shop-divider"></div>
+    <h2>🎨 Theme Shop</h2>
+    <p class="gem-hint">Spend gems to unlock a new look for the whole site!</p>
+    <div class="theme-shop" id="themeShop"></div>
+  </div>
+
+  <footer>Made with 💙 for language adventurers everywhere.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="big-emoji" id="modalEmoji">🎉</div>
+    <h3 id="modalTitle">Yay! Correct!</h3>
+    <p id="modalMessage"></p>
+    <div class="gem-banner" id="gemBanner" style="display:none;">
+      <div class="gem-earned" id="gemEarnedIcon">💎</div>
+      <p>Streak bonus! You earned a gem!</p>
+    </div>
+    <button onclick="closeCelebration()" id="nextBtn">Next ➡️</button>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// Question banks
+// =====================================================================
+const KATAKANA_BANK = [
+  { char: "ア", romaji: "a" }, { char: "イ", romaji: "i" }, { char: "ウ", romaji: "u" }, { char: "エ", romaji: "e" }, { char: "オ", romaji: "o" },
+  { char: "カ", romaji: "ka" }, { char: "キ", romaji: "ki" }, { char: "ク", romaji: "ku" }, { char: "ケ", romaji: "ke" }, { char: "コ", romaji: "ko" },
+  { char: "サ", romaji: "sa" }, { char: "シ", romaji: "shi" }, { char: "ス", romaji: "su" }, { char: "セ", romaji: "se" }, { char: "ソ", romaji: "so" },
+  { char: "タ", romaji: "ta" }, { char: "チ", romaji: "chi" }, { char: "ツ", romaji: "tsu" }, { char: "テ", romaji: "te" }, { char: "ト", romaji: "to" },
+  { char: "ナ", romaji: "na" }, { char: "ニ", romaji: "ni" }, { char: "ヌ", romaji: "nu" }, { char: "ネ", romaji: "ne" }, { char: "ノ", romaji: "no" },
+  { char: "ハ", romaji: "ha" }, { char: "ヒ", romaji: "hi" }, { char: "フ", romaji: "fu" }, { char: "ヘ", romaji: "he" }, { char: "ホ", romaji: "ho" },
+  { char: "マ", romaji: "ma" }, { char: "ミ", romaji: "mi" }, { char: "ム", romaji: "mu" }, { char: "メ", romaji: "me" }, { char: "モ", romaji: "mo" },
+  { char: "ヤ", romaji: "ya" }, { char: "ユ", romaji: "yu" }, { char: "ヨ", romaji: "yo" },
+  { char: "ラ", romaji: "ra" }, { char: "リ", romaji: "ri" }, { char: "ル", romaji: "ru" }, { char: "レ", romaji: "re" }, { char: "ロ", romaji: "ro" },
+  { char: "ワ", romaji: "wa" }, { char: "ヲ", romaji: "wo" }, { char: "ン", romaji: "n" }
+];
+
+// Day-of-month readings. weak:true marks the ones she mixes up a lot (4th, 8th, 20th) —
+// these get included extra times in the quiz on purpose.
+const DATE_BANK = [
+  { day: 1, kanji: "一日", hiragana: "ついたち", romaji: "tsuitachi" },
+  { day: 2, kanji: "二日", hiragana: "ふつか", romaji: "futsuka" },
+  { day: 3, kanji: "三日", hiragana: "みっか", romaji: "mikka" },
+  { day: 4, kanji: "四日", hiragana: "よっか", romaji: "yokka", weak: true },
+  { day: 5, kanji: "五日", hiragana: "いつか", romaji: "itsuka" },
+  { day: 6, kanji: "六日", hiragana: "むいか", romaji: "muika" },
+  { day: 7, kanji: "七日", hiragana: "なのか", romaji: "nanoka" },
+  { day: 8, kanji: "八日", hiragana: "ようか", romaji: "youka", weak: true },
+  { day: 9, kanji: "九日", hiragana: "ここのか", romaji: "kokonoka" },
+  { day: 10, kanji: "十日", hiragana: "とおか", romaji: "tooka" },
+  { day: 14, kanji: "十四日", hiragana: "じゅうよっか", romaji: "juuyokka" },
+  { day: 20, kanji: "二十日", hiragana: "はつか", romaji: "hatsuka", weak: true },
+  { day: 24, kanji: "二十四日", hiragana: "にじゅうよっか", romaji: "nijuuyokka" }
+];
+
+const ALL_PARTICLES = ["は", "が", "を", "に", "で", "へ", "と", "も", "の", "から", "まで"];
+
+const PARTICLE_BANK = [
+  { sentence: "わたし ___ がくせいです。", romaji: "watashi ___ gakusei desu", translation: "I am a student.", answer: "は" },
+  { sentence: "これ ___ ほんです。", romaji: "kore ___ hon desu", translation: "This is a book.", answer: "は" },
+  { sentence: "まいにち ほん ___ よみます。", romaji: "mainichi hon ___ yomimasu", translation: "I read a book every day.", answer: "を" },
+  { sentence: "がっこう ___ べんきょうします。", romaji: "gakkou ___ benkyoushimasu", translation: "I study at school.", answer: "で" },
+  { sentence: "こうえん ___ いきます。", romaji: "kouen ___ ikimasu", translation: "I go to the park.", answer: "へ" },
+  { sentence: "ともだち ___ はなします。", romaji: "tomodachi ___ hanashimasu", translation: "I talk with a friend.", answer: "と" },
+  { sentence: "これ は わたし ___ ほんです。", romaji: "kore wa watashi ___ hon desu", translation: "This is my book.", answer: "の" },
+  { sentence: "きょう ___ あついです。", romaji: "kyou ___ atsui desu", translation: "Today is hot.", answer: "は" },
+  { sentence: "にほんご ___ はなせますか。", romaji: "nihongo ___ hanasemasu ka", translation: "Can you speak Japanese?", answer: "が" },
+  { sentence: "うち ___ がっこうまで あるきます。", romaji: "uchi ___ gakkou made arukimasu", translation: "I walk from home to school.", answer: "から" },
+  { sentence: "うちから がっこう ___ あるきます。", romaji: "uchikara gakkou ___ arukimasu", translation: "I walk (from home) up to school.", answer: "まで" },
+  { sentence: "これ ___ すきです。", romaji: "kore ___ suki desu", translation: "I like this too.", answer: "も" }
+];
+
+// =====================================================================
+// Helpers
+// =====================================================================
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function makeChoices(correct, pool) {
+  const distractorPool = pool.filter(v => v !== correct);
+  const distractors = shuffle(distractorPool).slice(0, 3);
+  const choices = shuffle([correct, ...distractors]);
+  return { choices, answerIndex: choices.indexOf(correct) };
+}
+
+// =====================================================================
+// Question builders — one per review mode
+// =====================================================================
+function buildKatakanaQuestions() {
+  const pickOrder = shuffle(KATAKANA_BANK).slice(0, 16);
+  const romajiPool = KATAKANA_BANK.map(k => k.romaji);
+  return pickOrder.map(k => {
+    const { choices, answerIndex } = makeChoices(k.romaji, romajiPool);
+    return {
+      prompt: k.char,
+      promptSmall: false,
+      romajiHint: "",
+      translation: "",
+      choices,
+      answerIndex,
+      note: `${k.char} is read "${k.romaji}".`
+    };
+  });
+}
+
+function buildDateQuestions() {
+  const weak = DATE_BANK.filter(d => d.weak);
+  const others = DATE_BANK.filter(d => !d.weak);
+  const pool = [...weak, ...weak, ...others]; // weak days (4th/8th/20th) appear twice as often
+  const order = shuffle(pool);
+  const romajiPool = DATE_BANK.map(d => d.romaji);
+  return order.map(d => {
+    const { choices, answerIndex } = makeChoices(d.romaji, romajiPool);
+    return {
+      prompt: `${d.kanji}`,
+      promptSmall: true,
+      romajiHint: `(the ${d.day}${ordinalSuffix(d.day)})`,
+      translation: "",
+      choices,
+      answerIndex,
+      note: `${d.kanji} (the ${d.day}${ordinalSuffix(d.day)}) is read "${d.hiragana} (${d.romaji})".`
+    };
+  });
+}
+
+function ordinalSuffix(n) {
+  if (n % 10 === 1 && n !== 11) return "st";
+  if (n % 10 === 2 && n !== 12) return "nd";
+  if (n % 10 === 3 && n !== 13) return "rd";
+  return "th";
+}
+
+function buildParticleQuestions() {
+  const order = shuffle(PARTICLE_BANK);
+  return order.map(p => {
+    const { choices, answerIndex } = makeChoices(p.answer, ALL_PARTICLES);
+    return {
+      prompt: p.sentence,
+      promptSmall: true,
+      romajiHint: p.romaji,
+      translation: p.translation,
+      choices,
+      answerIndex,
+      note: `Correct particle: "${p.answer}" — ${p.translation}`
+    };
+  });
+}
+
+const MODES = {
+  katakana: { label: "Katakana", build: buildKatakanaQuestions },
+  dates: { label: "Days of the Month", build: buildDateQuestions },
+  particles: { label: "Particles", build: buildParticleQuestions }
+};
+
+// =====================================================================
+// Quiz engine state
+// =====================================================================
+let currentModeId = null;
+let questions = [];
+let qIndex = 0;
+let modeScore = 0;
+let modeAttempts = 0;
+let score = 0;
+let attempts = 0;
+let streak = 0;
+let bestStreak = 0;
+let gems = [];
+let ownedThemes = ["sky"];
+let activeTheme = "sky";
+let answeredCurrent = false;
+
+const GEM_TYPES = ["💎", "🌟", "🦄", "🎀", "🍭", "🌈", "🍀", "💠", "🧸", "⭐"];
+const STORAGE_KEY = "distanceQuizGemCollection";
+
+const THEMES = [
+  { id: "sky", label: "Sky Blue", cost: 0, dots: ["#4da3e8", "#2f6fb0"] },
+  { id: "sunset", label: "Sunset", cost: 5, dots: ["#f2935a", "#d1548f"] },
+  { id: "galaxy", label: "Galaxy", cost: 10, dots: ["#8a5fe0", "#5b3fa8"] }
+];
+
+function loadGemState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      gems = Array.isArray(data.gems) ? data.gems : [];
+      bestStreak = Number(data.bestStreak) || 0;
+      ownedThemes = Array.isArray(data.ownedThemes) && data.ownedThemes.length ? data.ownedThemes : ["sky"];
+      activeTheme = typeof data.activeTheme === "string" ? data.activeTheme : "sky";
+    }
+  } catch (e) {
+    gems = []; bestStreak = 0; ownedThemes = ["sky"]; activeTheme = "sky";
+  }
+  renderGemCase();
+  applyTheme(activeTheme);
+  renderThemeShop();
+}
+
+function saveGemState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ gems, bestStreak, ownedThemes, activeTheme }));
+  } catch (e) { /* storage unavailable, ignore */ }
+}
+
+function renderGemCase() {
+  const caseEl = document.getElementById('gemCase');
+  const countEl = document.getElementById('gemCount');
+  const bestEl = document.getElementById('bestStreak');
+  if (!caseEl) return;
+  caseEl.innerHTML = gems.length
+    ? gems.map(g => `<span class="gem">${g}</span>`).join('')
+    : '<span class="gem-placeholder">No gems yet — your collection starts here! ✨</span>';
+  countEl.textContent = gems.length;
+  bestEl.textContent = bestStreak;
+}
+
+function pickRandomGem() { return GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)]; }
+
+function applyTheme(id) { document.body.setAttribute('data-theme', id); }
+
+function renderThemeShop() {
+  const shop = document.getElementById('themeShop');
+  if (!shop) return;
+  shop.innerHTML = THEMES.map(theme => {
+    const owned = ownedThemes.includes(theme.id);
+    const isActive = activeTheme === theme.id;
+    const dots = theme.dots.map(c => `<span class="swatch-dot" style="background:${c}"></span>`).join('');
+    const costLine = owned ? (isActive ? "✓ Wearing this!" : "Tap to wear") : `🔒 ${theme.cost} gems`;
+    const classes = ["theme-swatch", isActive ? "active" : "", owned ? "" : "locked"].filter(Boolean).join(" ");
+    return `<div class="${classes}" onclick="handleThemeClick('${theme.id}')">
+      <div class="swatch-preview">${dots}</div>
+      ${theme.label}
+      <span class="swatch-cost">${costLine}</span>
+    </div>`;
+  }).join('');
+}
+
+function handleThemeClick(id) {
+  const theme = THEMES.find(t => t.id === id);
+  if (!theme) return;
+  if (ownedThemes.includes(id)) {
+    activeTheme = id; applyTheme(id); saveGemState(); renderThemeShop(); return;
+  }
+  if (gems.length >= theme.cost) {
+    gems = gems.slice(theme.cost);
+    ownedThemes.push(id);
+    activeTheme = id;
+    applyTheme(id);
+    saveGemState();
+    renderGemCase();
+    renderThemeShop();
+  }
+}
+
+// =====================================================================
+// Sound + voice (identical engine used across every topic page)
+// =====================================================================
+const praisePhrases = [
+  "You did it!", "Great job!", "Awesome work!", "Way to go!",
+  "You got it!", "Fantastic!", "Nice job!", "Super job!",
+  "Excellent!", "You're a star!"
+];
+
+function playChime() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.3);
+      t += 0.13;
+    });
+  } catch (e) { /* ignore */ }
+}
+
+function playIncorrectSound() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [349.23, 293.66];
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.15, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.22);
+      t += 0.15;
+    });
+  } catch (e) { /* ignore */ }
+}
+
+function playGemFanfare() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.3, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.34);
+      t += 0.11;
+    });
+  } catch (e) { /* ignore */ }
+}
+
+let cachedVoice = null;
+const PREFERRED_VOICE_NAMES = [
+  "Samantha", "Google US English", "Microsoft Zira", "Microsoft Aria",
+  "Victoria", "Karen", "Moira", "Tessa", "Google UK English Female", "Fiona"
+];
+
+function getPreferredVoice() {
+  if (cachedVoice) return cachedVoice;
+  try {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || !voices.length) return null;
+    for (const name of PREFERRED_VOICE_NAMES) {
+      const match = voices.find(v => v.name.includes(name));
+      if (match) { cachedVoice = match; return match; }
+    }
+    const female = voices.find(v => /female/i.test(v.name) && v.lang.startsWith('en'));
+    if (female) { cachedVoice = female; return female; }
+    const english = voices.find(v => v.lang.startsWith('en'));
+    if (english) { cachedVoice = english; return english; }
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => { cachedVoice = null; getPreferredVoice(); };
+}
+
+function speakPraise(suffix) {
+  try {
+    if (!('speechSynthesis' in window)) return null;
+    const phrase = praisePhrases[Math.floor(Math.random() * praisePhrases.length)];
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(suffix ? `${phrase} ${suffix}` : phrase);
+    const voice = getPreferredVoice();
+    if (voice) utter.voice = voice;
+    utter.rate = 1.05 + Math.random() * 0.15;
+    utter.pitch = 1.4 + Math.random() * 0.3;
+    window.speechSynthesis.speak(utter);
+    return phrase;
+  } catch (e) { return null; }
+}
+
+// =====================================================================
+// Mode select / quiz flow
+// =====================================================================
+function showModeSelect() {
+  document.getElementById('modeSelectCard').style.display = 'block';
+  document.getElementById('quizCard').style.display = 'none';
+}
+
+function startMode(modeId) {
+  currentModeId = modeId;
+  questions = MODES[modeId].build();
+  qIndex = 0;
+  modeScore = 0;
+  modeAttempts = 0;
+  document.getElementById('quizModeTag').textContent = MODES[modeId].label;
+  document.getElementById('modeSelectCard').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('quizBody').style.display = 'block';
+  document.getElementById('endScreen').classList.remove('show');
+  loadQuestion();
+}
+
+function retryMode() { startMode(currentModeId); }
+
+function loadQuestion() {
+  answeredCurrent = false;
+  const q = questions[qIndex];
+  const promptEl = document.getElementById('jpPrompt');
+  promptEl.textContent = q.prompt;
+  promptEl.className = 'jp-prompt' + (q.promptSmall ? ' small' : '');
+  document.getElementById('jpRomajiHint').textContent = q.romajiHint || '';
+  document.getElementById('jpTranslation').textContent = q.translation || '';
+
+  const grid = document.getElementById('choiceGrid');
+  grid.innerHTML = q.choices.map((c, i) =>
+    `<button class="choice-btn" onclick="selectAnswer(${i})">${c}</button>`
+  ).join('');
+
+  const note = document.getElementById('quizNote');
+  note.textContent = '';
+  note.classList.remove('show');
+  document.getElementById('nextQBtn').style.display = 'none';
+
+  document.getElementById('progressLabel').textContent = `Question ${qIndex + 1} of ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(qIndex / questions.length) * 100}%`;
+}
+
+function selectAnswer(i) {
+  if (answeredCurrent) return;
+  answeredCurrent = true;
+  const q = questions[qIndex];
+  const buttons = document.querySelectorAll('#choiceGrid .choice-btn');
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.answerIndex) btn.classList.add('correct');
+    else if (idx === i) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+  });
+
+  attempts++; modeAttempts++;
+  document.getElementById('attempts').textContent = attempts;
+
+  const note = document.getElementById('quizNote');
+  note.textContent = q.note;
+  note.classList.add('show');
+
+  if (i === q.answerIndex) {
+    score++; modeScore++;
+    document.getElementById('score').textContent = score;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    let gemAwarded = null;
+    if (streak > 0 && streak % 3 === 0) {
+      gemAwarded = pickRandomGem();
+      gems.push(gemAwarded);
+    }
+    saveGemState();
+    renderGemCase();
+    renderThemeShop();
+    showCelebration(q.note, gemAwarded);
+  } else {
+    streak = 0;
+    saveGemState();
+    renderGemCase();
+    playIncorrectSound();
+    document.getElementById('nextQBtn').style.display = 'inline-block';
+  }
+}
+
+function showCelebration(noteText, gemAwarded) {
+  const emoji = ["🎉", "🌟", "💙", "🦄", "🎀", "✨", "🩵", "🐰"][Math.floor(Math.random() * 8)];
+  if (gemAwarded) playGemFanfare(); else playChime();
+  const spoken = speakPraise(gemAwarded ? "You earned a gem!" : null);
+
+  document.getElementById('modalEmoji').textContent = emoji;
+  document.getElementById('modalTitle').textContent = spoken || 'Yay! Correct!';
+  document.getElementById('modalMessage').textContent = noteText;
+
+  const gemBanner = document.getElementById('gemBanner');
+  if (gemAwarded) {
+    document.getElementById('gemEarnedIcon').textContent = gemAwarded;
+    gemBanner.style.display = 'block';
+  } else {
+    gemBanner.style.display = 'none';
+  }
+  document.getElementById('overlay').classList.add('show');
+  launchConfetti();
+}
+
+function closeCelebration() {
+  document.getElementById('overlay').classList.remove('show');
+  nextQuestion();
+}
+
+function launchConfetti() {
+  const pieces = ["🎀", "💙", "⭐", "☁️", "✨", "🎉"];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+function nextQuestion() {
+  qIndex++;
+  if (qIndex >= questions.length) {
+    finishMode();
+  } else {
+    loadQuestion();
+  }
+}
+
+function finishMode() {
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressLabel').textContent = `Question ${questions.length} of ${questions.length}`;
+  document.getElementById('quizBody').style.display = 'none';
+  const endScreen = document.getElementById('endScreen');
+  endScreen.classList.add('show');
+  const pct = Math.round((modeScore / questions.length) * 100);
+  let emoji = "🎉", title = "All done!";
+  if (pct === 100) { emoji = "🏆"; title = "Perfect score!"; }
+  else if (pct >= 70) { emoji = "🌟"; title = "Great job!"; }
+  else { emoji = "💪"; title = "Nice try!"; }
+  document.getElementById('endEmoji').textContent = emoji;
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('endMessage').textContent = `You got ${modeScore} out of ${questions.length} correct in ${MODES[currentModeId].label}!`;
+  launchConfetti();
+}
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  getPreferredVoice();
+}
+loadGemState();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* offline caching unavailable, ignore */ });
+    });
+  }
+</script>
+</body>
+</html>
