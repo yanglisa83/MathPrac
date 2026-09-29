@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shape Squad: Area Adventures</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Math Adventures">
+<meta name="theme-color" content="#4da3e8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #cfe8ff;
+    --pink-deep: #4da3e8;
+    --lav: #dbeeff;
+    --lav-deep: #2f6fb0;
+    --mint: #c8f5e0;
+    --yellow: #eaf6ff;
+    --text: #234b6b;
+    --card: #f5fbff;
+    --good: #45b877;
+    --bad: #ff7a9c;
+    --heading: #1f6fb8;
+    --label: #2f7fd1;
+    --bg1: #eaf8ff;
+    --bg2: #b7e6ff;
+    --bg3: #7cc9f5;
+    --shadow: 0 8px 0 rgba(70, 150, 210, 0.35);
+  }
+  /* Unlockable themes — bought with collected gems, switched via body[data-theme] */
+  body[data-theme="sunset"] {
+    --pink: #ffe1cf;
+    --pink-deep: #f2935a;
+    --lav: #ffd9ec;
+    --lav-deep: #d1548f;
+    --yellow: #fff1e0;
+    --text: #6b3a23;
+    --card: #fff8f2;
+    --heading: #d1548f;
+    --label: #c76a2e;
+    --bg1: #fff3ea;
+    --bg2: #ffd9b8;
+    --bg3: #ffb488;
+    --shadow: 0 8px 0 rgba(230, 140, 70, 0.35);
+  }
+  body[data-theme="galaxy"] {
+    --pink: #e0d4ff;
+    --pink-deep: #8a5fe0;
+    --lav: #d8c9ff;
+    --lav-deep: #5b3fa8;
+    --yellow: #efe6ff;
+    --text: #33245c;
+    --card: #f7f3ff;
+    --heading: #5b3fa8;
+    --label: #6d4bc7;
+    --bg1: #efe6ff;
+    --bg2: #c9b3f5;
+    --bg3: #8f6fe0;
+    --shadow: 0 8px 0 rgba(140, 100, 220, 0.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 24px 16px 64px;
+    background: radial-gradient(circle at 20% 10%, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background 0.4s ease;
+  }
+  .cloud {
+    position: fixed;
+    background: #ffffff;
+    border-radius: 100px;
+    opacity: 0.92;
+    z-index: 0;
+    pointer-events: none;
+    animation: drift ease-in-out infinite alternate;
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+  }
+  .cloud1 { width: 130px; height: 42px; top: 6%; left: 6%; animation-duration: 26s; }
+  .cloud1::before { width: 62px; height: 62px; top: -32px; left: 14px; }
+  .cloud1::after { width: 48px; height: 48px; top: -20px; left: 58px; }
+
+  .cloud2 { width: 95px; height: 32px; top: 14%; left: 68%; animation-duration: 34s; }
+  .cloud2::before { width: 46px; height: 46px; top: -22px; left: 10px; }
+  .cloud2::after { width: 38px; height: 38px; top: -16px; left: 42px; }
+
+  .cloud3 { width: 150px; height: 46px; top: 40%; left: -6%; animation-duration: 40s; }
+  .cloud3::before { width: 72px; height: 72px; top: -36px; left: 20px; }
+  .cloud3::after { width: 56px; height: 56px; top: -24px; left: 66px; }
+
+  .cloud4 { width: 105px; height: 34px; top: 68%; left: 78%; animation-duration: 30s; }
+  .cloud4::before { width: 50px; height: 50px; top: -24px; left: 12px; }
+  .cloud4::after { width: 42px; height: 42px; top: -18px; left: 44px; }
+
+  .cloud5 { width: 80px; height: 28px; top: 85%; left: 20%; animation-duration: 22s; }
+  .cloud5::before { width: 40px; height: 40px; top: -20px; left: 8px; }
+  .cloud5::after { width: 32px; height: 32px; top: -14px; left: 34px; }
+
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to { transform: translateX(45px); }
+  }
+  body::before {
+    content: "🎀 ✨ 🩵 ⭐ ☁️ ✨ 🎀 ⭐ 🩵 ☁️ ✨ 🎀 ⭐";
+    position: fixed;
+    inset: 0;
+    font-size: 22px;
+    letter-spacing: 40px;
+    line-height: 90px;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+    word-break: break-all;
+    overflow: hidden;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+  h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--heading);
+    text-shadow: 2px 2px 0 #fff;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--text);
+    font-weight: 600;
+    margin: 0 0 24px;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 14px;
+    color: var(--heading);
+    font-weight: 700;
+    text-decoration: none;
+    font-family: 'Baloo 2', cursive;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .mascot-row {
+    text-align: center;
+    font-size: 2.4rem;
+    margin-bottom: 10px;
+  }
+  .card {
+    background: var(--card);
+    border: 3px solid #fff;
+    outline: 3px solid var(--pink-deep);
+    border-radius: 26px;
+    padding: 26px 24px 30px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem;
+    margin: 0 0 12px;
+    color: var(--label);
+  }
+  .formula-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.6rem;
+    font-weight: 700;
+    padding: 16px;
+    background: var(--yellow);
+    border-radius: 18px;
+    margin-bottom: 12px;
+    border: 2px dashed var(--pink-deep);
+  }
+  .formula-box span.op { color: #b98a3a; font-weight: 400; }
+  p { margin: 0 0 10px; }
+
+  /* Progress bar */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .progress-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    color: var(--label);
+  }
+  .progress-track {
+    flex: 1;
+    height: 14px;
+    background: #f3dcf7;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #fff;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--pink-deep), var(--lav-deep));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  .review-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .nav-btn {
+    background: transparent;
+    color: var(--lav-deep);
+    border: 2px solid var(--lav-deep);
+    box-shadow: none;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 12px;
+  }
+  .nav-btn:active { transform: translateY(1px); }
+  .nav-btn:disabled {
+    opacity: 0.35;
+    border-color: var(--lav-deep);
+    cursor: default;
+  }
+  .review-tag {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b98a3a;
+    background: var(--yellow);
+    padding: 4px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .problem-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .answer-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  input[type="number"] {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 2px solid var(--pink-deep);
+    background: #fff;
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+  }
+  input[type="number"]:focus { outline: 3px solid var(--lav-deep); }
+  input[type="number"]:disabled { opacity: 0.6; }
+  .unit-tag {
+    font-weight: 700;
+    color: var(--label);
+    white-space: nowrap;
+  }
+  button {
+    appearance: none;
+    border: none;
+    background: linear-gradient(180deg, #8ec9ff, var(--pink-deep));
+    color: #7a2f57;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--heading);
+  }
+  button:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--heading); }
+  button:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
+  button.secondary {
+    background: linear-gradient(180deg, #dbeeff, var(--lav-deep));
+    box-shadow: 0 4px 0 #1f5e9c;
+    color: #163a5c;
+  }
+  button.secondary:active { box-shadow: 0 2px 0 #1f5e9c; }
+
+  .feedback {
+    font-weight: 700;
+    margin-top: 10px;
+    min-height: 1.4em;
+  }
+  .feedback.incorrect { color: var(--bad); }
+
+  .hint-box {
+    background: var(--lav);
+    border: 2px dashed var(--lav-deep);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-top: 6px;
+    font-size: 0.95rem;
+    color: #163a5c;
+    animation: fadeInSoft 0.3s ease;
+  }
+  .explanation-box {
+    background: var(--yellow);
+    border: 2px dashed var(--pink-deep);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    margin-top: 10px;
+    animation: fadeInSoft 0.35s ease;
+  }
+  .explanation-box h4 {
+    font-family: 'Baloo 2', cursive;
+    margin: 0 0 8px;
+    color: var(--heading);
+    font-size: 1.05rem;
+  }
+  .explanation-box p { font-size: 0.95rem; }
+  .explanation-answer {
+    font-weight: 700;
+    color: var(--heading);
+  }
+  @keyframes fadeInSoft {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .score-line {
+    text-align: center;
+    font-weight: 700;
+    color: var(--label);
+    margin-bottom: 6px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 2px dotted #f3c6de; }
+  th { color: var(--label); font-weight: 700; }
+
+  footer {
+    text-align: center;
+    color: var(--label);
+    font-size: 0.85rem;
+    margin-top: 28px;
+    font-weight: 600;
+  }
+
+  /* Gem collection */
+  .gem-hint {
+    font-size: 0.9rem;
+    color: var(--lav-deep);
+    margin-bottom: 14px;
+  }
+  .gem-case {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px;
+    background: var(--lav);
+    border-radius: 14px;
+    border: 2px dashed var(--lav-deep);
+    margin-bottom: 12px;
+  }
+  .gem-case .gem {
+    font-size: 1.6rem;
+    animation: gemIn 0.3s ease;
+  }
+  @keyframes gemIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .gem-placeholder {
+    font-size: 0.85rem;
+    color: var(--lav-deep);
+    font-weight: 600;
+    align-self: center;
+  }
+  .collection-stats {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--label);
+    margin: 0;
+  }
+
+  .shop-divider {
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--lav-deep) 0 8px, transparent 8px 16px);
+    opacity: 0.5;
+    margin: 18px 0 16px;
+  }
+  .theme-shop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .theme-swatch {
+    flex: 1;
+    min-width: 110px;
+    border-radius: 16px;
+    padding: 12px 10px;
+    text-align: center;
+    border: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--card);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+  }
+  .theme-swatch:active { transform: translateY(2px); box-shadow: none; }
+  .theme-swatch.active { border-color: var(--good); }
+  .theme-swatch.locked { opacity: 0.85; }
+  .theme-swatch .swatch-preview {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .theme-swatch .swatch-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+  .theme-swatch .swatch-cost {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+
+  /* Gem bonus banner inside the celebration modal */
+  .gem-banner {
+    background: var(--yellow);
+    border: 2px dashed var(--pink-deep);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+  .gem-banner .gem-earned {
+    font-size: 2.2rem;
+    animation: gemIn 0.4s ease;
+  }
+  .gem-banner p {
+    margin: 4px 0 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  /* Popup modal */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(140, 80, 130, 0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 28px;
+    border: 4px solid var(--pink-deep);
+    padding: 32px 28px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 12px 0 rgba(70,150,210,0.4);
+    animation: pop 0.35s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    70% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  .modal .big-emoji {
+    font-size: 3.2rem;
+    margin-bottom: 8px;
+    display: inline-block;
+    animation: bounceEmoji 0.7s ease infinite;
+  }
+  @keyframes bounceEmoji {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-12px) rotate(4deg); }
+  }
+  .modal h3 {
+    font-family: 'Baloo 2', cursive;
+    color: var(--heading);
+    font-size: 1.5rem;
+    margin: 0 0 6px;
+  }
+  .modal p { color: var(--text); font-weight: 600; margin-bottom: 18px; }
+
+  /* End screen */
+  .end-screen { text-align: center; display: none; }
+  .end-screen.show { display: block; }
+  .end-emoji { font-size: 3rem; }
+
+  /* Confetti bits */
+  .confetti {
+    position: fixed;
+    top: -20px;
+    font-size: 1.4rem;
+    z-index: 60;
+    animation: fall linear forwards;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(105vh) rotate(360deg); opacity: 0.9; }
+  }
+</style>
+</head>
+<body>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+<div class="cloud cloud4"></div>
+<div class="cloud cloud5"></div>
+<div class="wrap">
+  <a href="index.html" class="back-link">← All Topics</a>
+  <div class="mascot-row">📐🎀📏🩵✨</div>
+  <h1>Shape Squad: Area Adventures!</h1>
+  <p class="subtitle">Squares, rectangles, parallelograms, and triangles — put on your thinking cap!</p>
+
+  <div class="card">
+    <h2>✨ The Magic Formulas ✨</h2>
+    <div class="formula-box">
+      <span>Area</span><span class="op">=</span><span>...</span>
+    </div>
+    <p>These problems love to hide an extra step — a missing side, a sneaky distractor number, or a shape inside a shape. Read carefully before you calculate!</p>
+    <table>
+      <tr><th>Shape</th><th>Formula</th></tr>
+      <tr><td>Square</td><td>side × side</td></tr>
+      <tr><td>Rectangle</td><td>length × width</td></tr>
+      <tr><td>Parallelogram</td><td>base × height (the height must be perpendicular to the base!)</td></tr>
+      <tr><td>Triangle</td><td>(base × height) ÷ 2</td></tr>
+    </table>
+  </div>
+
+  <div class="card" id="quizCard">
+    <h2>🌟 Word Problems 🌟</h2>
+    <div class="progress-wrap">
+      <span class="progress-label" id="progressLabel">Problem 1 of 10</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="review-nav">
+      <button class="nav-btn" id="reviewPrevBtn" onclick="reviewPrevious()">◀ Previous</button>
+      <span class="review-tag" id="reviewTag" style="display:none;">👀 Reviewing</span>
+      <button class="nav-btn" id="reviewNextBtn" onclick="reviewNext()">Next ▶</button>
+    </div>
+    <div class="score-line">⭐ Score: <span id="score">0</span> / <span id="attempts">0</span> ⭐</div>
+
+    <div id="quizBody">
+      <div class="problem-text" id="problemText"></div>
+      <div class="answer-row">
+        <input type="number" id="quizAnswer" placeholder="Your answer">
+        <span class="unit-tag" id="unitTag"></span>
+      </div>
+      <button onclick="checkAnswer()" id="checkBtn">Check My Answer 💙</button>
+      <div class="feedback" id="feedback"></div>
+      <div class="hint-box" id="hintBox" style="display:none;">
+        <strong>💡 Hint:</strong> <span id="hintText"></span>
+      </div>
+      <div class="explanation-box" id="explanationBox" style="display:none;">
+        <h4>Let's work through it together 💙</h4>
+        <p id="explanationText"></p>
+        <p class="explanation-answer" id="explanationAnswer"></p>
+        <button class="secondary" onclick="continueAfterExplanation()">Continue ➡️</button>
+      </div>
+    </div>
+
+    <div class="end-screen" id="endScreen">
+      <div class="end-emoji" id="endEmoji">🎉</div>
+      <h2 id="endTitle">All done!</h2>
+      <p id="endMessage"></p>
+      <button class="secondary" onclick="restartQuiz()">Play Again 🔁</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎒 My Gem Collection</h2>
+    <p class="gem-hint">Get 3 right in a row on your <strong>first try</strong> to earn a gem!</p>
+    <div class="gem-case" id="gemCase"></div>
+    <p class="collection-stats">Gems collected: <span id="gemCount">0</span> &nbsp;|&nbsp; Best streak: <span id="bestStreak">0</span> 🔥</p>
+
+    <div class="shop-divider"></div>
+    <h2>🎨 Theme Shop</h2>
+    <p class="gem-hint">Spend gems to unlock a new look for the whole page!</p>
+    <div class="theme-shop" id="themeShop"></div>
+  </div>
+
+  <footer>Made with 💙 for math adventurers everywhere.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="big-emoji" id="modalEmoji">🎉</div>
+    <h3 id="modalTitle">Yay! Correct!</h3>
+    <p id="modalMessage"></p>
+    <div class="gem-banner" id="gemBanner" style="display:none;">
+      <div class="gem-earned" id="gemEarnedIcon">💎</div>
+      <p>Streak bonus! You earned a gem!</p>
+    </div>
+    <button onclick="nextProblem()" id="nextBtn">Next Problem ➡️</button>
+  </div>
+</div>
+
+<script>
+// ---- Fixed set of 10 kid-friendly word problems ----
+// Ordered from easiest to hardest (two-step throughout, but building up in concept complexity)
+const problems = [
+  {
+    text: "A square garden has a perimeter of 36 meters. What is the area of the garden, in square meters?",
+    answer: 81, unit: "sq meters",
+    hint: "A square has 4 equal sides. Find the length of one side first, then use it to find the area.",
+    explanation: "Step 1: Divide the perimeter by 4 to find one side: 36 ÷ 4 = 9 meters. Step 2: Area = side × side = 9 × 9 = 81 square meters."
+  },
+  {
+    text: "A square piece of cardboard has a side length of 10 cm. A triangle is cut from one corner, with both of its legs measuring 6 cm along the square's sides. What is the area of the cardboard that's left over?",
+    answer: 82, unit: "sq cm",
+    hint: "Find the area of the whole square and the area of the triangle that got cut off, then subtract.",
+    explanation: "Step 1: Area of the square: 10 × 10 = 100 sq cm. Step 2: Area of the triangle removed: (6 × 6) ÷ 2 = 18 sq cm. Step 3: Subtract: 100 − 18 = 82 sq cm."
+  },
+  {
+    text: "An L-shaped room is made by cutting a small 3 m by 4 m rectangle out of the corner of a large 10 m by 8 m rectangle. What is the area of the remaining L-shaped room, in square meters?",
+    answer: 68, unit: "sq meters",
+    hint: "Find the area of the big rectangle and the area of the small rectangle that's missing, then subtract.",
+    explanation: "Step 1: Area of the large rectangle: 10 × 8 = 80 sq m. Step 2: Area of the missing corner: 3 × 4 = 12 sq m. Step 3: Subtract: 80 − 12 = 68 sq m."
+  },
+  {
+    text: "A parallelogram has two sides that measure 15 cm and 9 cm. The height measured perpendicular to the 15 cm side is 8 cm. What is the area of the parallelogram, in square cm?",
+    answer: 120, unit: "sq cm",
+    hint: "Area of a parallelogram only needs ONE side and the height that goes with that same side — not every number given is needed!",
+    explanation: "The 9 cm side is extra information you don't need here. Area = base × height = 15 × 8 = 120 sq cm."
+  },
+  {
+    text: "A rectangular piece of paper measures 12 cm by 10 cm. Sam cuts it in half along one diagonal, making two identical triangles. What is the area of just ONE of those triangles, in square cm?",
+    answer: 60, unit: "sq cm",
+    hint: "First find the area of the whole rectangle. What happens to that area when the diagonal cut splits it into two equal triangles?",
+    explanation: "Step 1: Area of the rectangle: 12 × 10 = 120 sq cm. Step 2: The diagonal splits it into 2 equal triangles, so one triangle is half: 120 ÷ 2 = 60 sq cm."
+  },
+  {
+    text: "A parallelogram has an area of 84 square cm and a base of 12 cm. A triangle is drawn with that exact same base and the exact same height as the parallelogram. What is the area of the triangle, in square cm?",
+    answer: 42, unit: "sq cm",
+    hint: "A triangle with the same base and height as a parallelogram always has a very simple relationship to the parallelogram's area.",
+    explanation: "A triangle with the same base and height as a parallelogram always has exactly half its area — you don't even need to find the height! Triangle area = 84 ÷ 2 = 42 sq cm."
+  },
+  {
+    text: "A rectangle has an area of 96 square inches. One of its sides is 8 inches long. What is the perimeter of the rectangle, in inches?",
+    answer: 40, unit: "inches",
+    hint: "Use the area to find the missing side first, then use both sides to find the perimeter.",
+    explanation: "Step 1: Find the missing side: 96 ÷ 8 = 12 inches. Step 2: Perimeter = 2 × (length + width) = 2 × (8 + 12) = 40 inches."
+  },
+  {
+    text: "A parallelogram has a base of 14 cm and a height of 5 cm. A rectangle has exactly the same area as this parallelogram. If one side of the rectangle is 7 cm, what is its other side, in cm?",
+    answer: 10, unit: "cm",
+    hint: "Find the parallelogram's area first — that's also the rectangle's area. Then work backward to find the missing rectangle side.",
+    explanation: "Step 1: Area of the parallelogram: 14 × 5 = 70 sq cm. Step 2: The rectangle has the same area, so its other side is 70 ÷ 7 = 10 cm."
+  },
+  {
+    text: "A square has an area of 20 square units. If you double the square's side length, what is the area of the new, bigger square, in square units?",
+    answer: 80, unit: "sq units",
+    hint: "Doubling the side length does NOT just double the area — think about what area actually means (side × side).",
+    explanation: "Doubling a side length multiplies the area by 2 × 2 = 4, since area = side × side and BOTH the length and width double. New area = 20 × 4 = 80 square units."
+  },
+  {
+    text: "A rectangle's length is 3 times its width. If its perimeter is 64 cm, what is its area, in square cm?",
+    answer: 192, unit: "sq cm",
+    hint: "Use the perimeter to find length + width first. Since length is 3 times the width, think of it as 4 equal-width pieces adding up.",
+    explanation: "Step 1: Perimeter = 2 × (length + width) = 64, so length + width = 32. Step 2: Since length = 3 × width, that's 4 widths totaling 32, so width = 32 ÷ 4 = 8 cm and length = 3 × 8 = 24 cm. Step 3: Area = 24 × 8 = 192 sq cm."
+  }
+];
+
+let currentIndex = 0;
+let score = 0;
+let attempts = 0;
+let streak = 0;
+let bestStreak = 0;
+let gems = [];
+let hasMissedCurrent = false;
+let wrongAttemptsCurrent = 0;
+let ownedThemes = ["sky"];
+let activeTheme = "sky";
+
+const GEM_TYPES = ["💎", "🌟", "🦄", "🎀", "🍭", "🌈", "🍀", "💠", "🧸", "⭐"];
+const STORAGE_KEY = "distanceQuizGemCollection";
+
+const THEMES = [
+  { id: "sky", label: "Sky Blue", cost: 0, dots: ["#4da3e8", "#2f6fb0"] },
+  { id: "sunset", label: "Sunset", cost: 5, dots: ["#f2935a", "#d1548f"] },
+  { id: "galaxy", label: "Galaxy", cost: 10, dots: ["#8a5fe0", "#5b3fa8"] }
+];
+
+function loadGemState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      gems = Array.isArray(data.gems) ? data.gems : [];
+      bestStreak = Number(data.bestStreak) || 0;
+      ownedThemes = Array.isArray(data.ownedThemes) && data.ownedThemes.length ? data.ownedThemes : ["sky"];
+      activeTheme = typeof data.activeTheme === "string" ? data.activeTheme : "sky";
+    }
+  } catch (e) {
+    gems = [];
+    bestStreak = 0;
+    ownedThemes = ["sky"];
+    activeTheme = "sky";
+  }
+  renderGemCase();
+  applyTheme(activeTheme);
+  renderThemeShop();
+}
+
+function saveGemState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ gems, bestStreak, ownedThemes, activeTheme }));
+  } catch (e) { /* storage unavailable, ignore */ }
+}
+
+function renderGemCase() {
+  const caseEl = document.getElementById('gemCase');
+  const countEl = document.getElementById('gemCount');
+  const bestEl = document.getElementById('bestStreak');
+  if (!caseEl) return;
+  caseEl.innerHTML = gems.length
+    ? gems.map(g => `<span class="gem">${g}</span>`).join('')
+    : '<span class="gem-placeholder">No gems yet — your collection starts here! ✨</span>';
+  countEl.textContent = gems.length;
+  bestEl.textContent = bestStreak;
+}
+
+function pickRandomGem() {
+  return GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)];
+}
+
+function applyTheme(id) {
+  document.body.setAttribute('data-theme', id);
+}
+
+function renderThemeShop() {
+  const shop = document.getElementById('themeShop');
+  if (!shop) return;
+  shop.innerHTML = THEMES.map(theme => {
+    const owned = ownedThemes.includes(theme.id);
+    const isActive = activeTheme === theme.id;
+    const dots = theme.dots.map(c => `<span class="swatch-dot" style="background:${c}"></span>`).join('');
+    const costLine = owned
+      ? (isActive ? "✓ Wearing this!" : "Tap to wear")
+      : `🔒 ${theme.cost} gems`;
+    const classes = ["theme-swatch", isActive ? "active" : "", owned ? "" : "locked"].filter(Boolean).join(" ");
+    return `<div class="${classes}" onclick="handleThemeClick('${theme.id}')">
+      <div class="swatch-preview">${dots}</div>
+      ${theme.label}
+      <span class="swatch-cost">${costLine}</span>
+    </div>`;
+  }).join('');
+}
+
+function handleThemeClick(id) {
+  const theme = THEMES.find(t => t.id === id);
+  if (!theme) return;
+
+  if (ownedThemes.includes(id)) {
+    activeTheme = id;
+    applyTheme(id);
+    saveGemState();
+    renderThemeShop();
+    return;
+  }
+
+  if (gems.length >= theme.cost) {
+    gems = gems.slice(theme.cost); // spend that many gems from the collection
+    ownedThemes.push(id);
+    activeTheme = id;
+    applyTheme(id);
+    saveGemState();
+    renderGemCase();
+    renderThemeShop();
+  }
+  // not enough gems yet: swatch just stays locked, nothing to do
+}
+
+const celebrationEmojis = ["🎉", "🌟", "💙", "🦄", "🎀", "✨", "🩵", "🐰"];
+const celebrationMessages = [
+  "You did it! You're a geometry genius!",
+  "Amazing job! Keep it up!",
+  "Wow, such sharp shape-solving skills!",
+  "Great work! On to the next puzzle!",
+  "You solved it perfectly!"
+];
+
+function loadProblem() {
+  hasMissedCurrent = false;
+  wrongAttemptsCurrent = 0;
+  const p = problems[currentIndex];
+  document.getElementById('problemText').textContent = p.text;
+  document.getElementById('unitTag').textContent = p.unit;
+  const input = document.getElementById('quizAnswer');
+  input.value = '';
+  input.disabled = false;
+  document.getElementById('checkBtn').disabled = false;
+  const feedback = document.getElementById('feedback');
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  document.getElementById('hintBox').style.display = 'none';
+  document.getElementById('explanationBox').style.display = 'none';
+
+  const isReviewing = currentIndex < score;
+  document.getElementById('progressLabel').textContent = `Problem ${currentIndex + 1} of ${problems.length}`;
+  // Progress bar reflects real mastery (score), so browsing old problems never makes it look like she lost progress
+  document.getElementById('progressFill').style.width = `${(score / problems.length) * 100}%`;
+  document.getElementById('reviewTag').style.display = isReviewing ? 'inline-block' : 'none';
+  document.getElementById('reviewPrevBtn').disabled = currentIndex <= 0;
+  document.getElementById('reviewNextBtn').disabled = currentIndex >= score;
+
+  input.focus();
+}
+
+function checkAnswer() {
+  const p = problems[currentIndex];
+  const input = document.getElementById('quizAnswer');
+  const userAnswer = parseFloat(input.value);
+  const feedback = document.getElementById('feedback');
+  const isReviewing = currentIndex < score; // already-solved problem being revisited — practice only, no scoring
+
+  if (isNaN(userAnswer)) {
+    feedback.textContent = "Type a number first! 🙂";
+    feedback.className = 'feedback incorrect';
+    return;
+  }
+
+  if (Math.abs(userAnswer - p.answer) < 0.01) {
+    let gemAwarded = null;
+    if (!isReviewing) {
+      attempts++;
+      document.getElementById('attempts').textContent = attempts;
+      const wasFirstTry = !hasMissedCurrent;
+      score++;
+      document.getElementById('score').textContent = score;
+
+      if (wasFirstTry) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        if (streak > 0 && streak % 3 === 0) {
+          gemAwarded = pickRandomGem();
+          gems.push(gemAwarded);
+        }
+        saveGemState();
+        renderGemCase();
+        renderThemeShop();
+      }
+    }
+
+    input.disabled = true;
+    document.getElementById('checkBtn').disabled = true;
+    feedback.textContent = '';
+    showCelebration(p, gemAwarded);
+  } else {
+    wrongAttemptsCurrent++;
+    if (!isReviewing) {
+      attempts++;
+      document.getElementById('attempts').textContent = attempts;
+      if (!hasMissedCurrent) {
+        streak = 0;
+        saveGemState();
+        renderGemCase();
+      }
+    }
+    hasMissedCurrent = true;
+    playIncorrectSound();
+
+    if (wrongAttemptsCurrent >= 3) {
+      feedback.textContent = "Let's take a look at this one together 👇";
+      feedback.className = 'feedback incorrect';
+      showExplanation(p);
+    } else if (wrongAttemptsCurrent === 1) {
+      feedback.textContent = "Not quite — try again! I left a hint below. 💪";
+      feedback.className = 'feedback incorrect';
+      document.getElementById('hintText').textContent = p.hint;
+      document.getElementById('hintBox').style.display = 'block';
+    } else {
+      feedback.textContent = "Still not quite — you can do it! 💪";
+      feedback.className = 'feedback incorrect';
+    }
+  }
+}
+
+function showExplanation(p) {
+  const input = document.getElementById('quizAnswer');
+  input.disabled = true;
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('hintBox').style.display = 'none';
+  document.getElementById('explanationText').textContent = p.explanation;
+  document.getElementById('explanationAnswer').textContent = `Answer: ${p.answer} ${p.unit}`;
+  document.getElementById('explanationBox').style.display = 'block';
+  speakExplanation(p.explanation);
+}
+
+// Shared "what happens after this problem is done" logic for both the
+// celebration modal's Next button and the explanation box's Continue button.
+// If she was browsing back to review an earlier (already-solved) problem,
+// this returns her to the frontier problem she was actually working on,
+// instead of just nudging forward one at a time.
+function advanceAfterAnswer() {
+  if (currentIndex < score) {
+    currentIndex = score;
+  } else {
+    currentIndex++;
+  }
+  if (currentIndex >= problems.length) {
+    finishQuiz();
+  } else {
+    loadProblem();
+  }
+}
+
+function continueAfterExplanation() {
+  document.getElementById('explanationBox').style.display = 'none';
+  advanceAfterAnswer();
+}
+
+function goToReview(idx) {
+  const maxIdx = score; // can't peek beyond the problem she hasn't unlocked yet
+  currentIndex = Math.max(0, Math.min(idx, maxIdx));
+  loadProblem();
+}
+
+function reviewPrevious() { goToReview(currentIndex - 1); }
+function reviewNext() { goToReview(currentIndex + 1); }
+
+const praisePhrases = [
+  "You did it!", "Great job!", "Awesome work!", "Way to go!",
+  "You got it!", "Fantastic!", "Nice job!", "Super job!",
+  "Excellent!", "You're a star!"
+];
+
+function playChime() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6 - happy little arpeggio
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.3);
+      t += 0.13;
+    });
+  } catch (e) { /* audio not available, ignore */ }
+}
+
+function playIncorrectSound() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [349.23, 293.66]; // gentle two-tone "try again" dip, not harsh
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.15, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.22);
+      t += 0.15;
+    });
+  } catch (e) { /* audio not available, ignore */ }
+}
+
+function playGemFanfare() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5]; // bigger "level up" run for gem streaks
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.3, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.34);
+      t += 0.11;
+    });
+  } catch (e) { /* audio not available, ignore */ }
+}
+
+// ---- Pick a lively, girl-friendly voice once voices are loaded ----
+let cachedVoice = null;
+const PREFERRED_VOICE_NAMES = [
+  "Samantha", "Google US English", "Microsoft Zira", "Microsoft Aria",
+  "Victoria", "Karen", "Moira", "Tessa", "Google UK English Female", "Fiona"
+];
+
+function getPreferredVoice() {
+  if (cachedVoice) return cachedVoice;
+  try {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || !voices.length) return null;
+    for (const name of PREFERRED_VOICE_NAMES) {
+      const match = voices.find(v => v.name.includes(name));
+      if (match) { cachedVoice = match; return match; }
+    }
+    const female = voices.find(v => /female/i.test(v.name) && v.lang.startsWith('en'));
+    if (female) { cachedVoice = female; return female; }
+    const english = voices.find(v => v.lang.startsWith('en'));
+    if (english) { cachedVoice = english; return english; }
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => { cachedVoice = null; getPreferredVoice(); };
+}
+
+function speakPraise(suffix) {
+  try {
+    if (!('speechSynthesis' in window)) return null;
+    const phrase = praisePhrases[Math.floor(Math.random() * praisePhrases.length)];
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(suffix ? `${phrase} ${suffix}` : phrase);
+    const voice = getPreferredVoice();
+    if (voice) utter.voice = voice;
+    // Randomize pitch/rate a bit each time for a lively, animated, non-robotic feel
+    utter.rate = 1.05 + Math.random() * 0.15;
+    utter.pitch = 1.4 + Math.random() * 0.3;
+    window.speechSynthesis.speak(utter);
+    return phrase;
+  } catch (e) { return null; }
+}
+
+function speakExplanation(text) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    const voice = getPreferredVoice();
+    if (voice) utter.voice = voice;
+    utter.rate = 0.95;
+    utter.pitch = 1.25;
+    window.speechSynthesis.speak(utter);
+  } catch (e) { /* ignore */ }
+}
+
+function showCelebration(p, gemAwarded) {
+  const emoji = celebrationEmojis[Math.floor(Math.random() * celebrationEmojis.length)];
+  const msg = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+
+  if (gemAwarded) {
+    playGemFanfare();
+  } else {
+    playChime();
+  }
+  const spoken = speakPraise(gemAwarded ? "You earned a gem!" : null);
+
+  document.getElementById('modalEmoji').textContent = emoji;
+  document.getElementById('modalTitle').textContent = spoken || 'Yay! Correct!';
+  document.getElementById('modalMessage').textContent = `${msg} The answer was ${p.answer} ${p.unit}.`;
+
+  const gemBanner = document.getElementById('gemBanner');
+  if (gemAwarded) {
+    document.getElementById('gemEarnedIcon').textContent = gemAwarded;
+    gemBanner.style.display = 'block';
+  } else {
+    gemBanner.style.display = 'none';
+  }
+
+  document.getElementById('overlay').classList.add('show');
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const pieces = ["🎀","💙","⭐","☁️","✨","🎉"];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+function nextProblem() {
+  document.getElementById('overlay').classList.remove('show');
+  advanceAfterAnswer();
+}
+
+function finishQuiz() {
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressLabel').textContent = `Problem ${problems.length} of ${problems.length}`;
+  document.getElementById('quizBody').style.display = 'none';
+  const endScreen = document.getElementById('endScreen');
+  endScreen.classList.add('show');
+  const pct = Math.round((score / problems.length) * 100);
+  let emoji = "🎉";
+  let title = "All done!";
+  if (pct === 100) { emoji = "🏆"; title = "Perfect score!"; }
+  else if (pct >= 70) { emoji = "🌟"; title = "Great job!"; }
+  else { emoji = "💪"; title = "Nice try!"; }
+  document.getElementById('endEmoji').textContent = emoji;
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('endMessage').textContent = `You got ${score} out of ${problems.length} correct!`;
+  launchConfetti();
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  score = 0;
+  attempts = 0;
+  streak = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('attempts').textContent = 0;
+  document.getElementById('quizBody').style.display = 'block';
+  document.getElementById('endScreen').classList.remove('show');
+  loadProblem();
+}
+
+document.getElementById('quizAnswer').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !this.disabled) checkAnswer();
+});
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  getPreferredVoice(); // warm up voice list (some browsers populate it asynchronously)
+}
+loadGemState();
+loadProblem();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* offline caching unavailable, ignore */ });
+    });
+  }
+</script>
+</body>
+</html>
