@@ -1,11 +1,12 @@
 // Simple offline cache for Math Adventures so it works without wifi
 // once it's been opened at least once.
-const CACHE_NAME = "math-adventures-v3";
+const CACHE_NAME = "math-adventures-v4";
 const ASSETS = [
   "index.html",
   "distance.html",
   "area.html",
   "japanese.html",
+  "readaday.html",
   "manifest.json",
   "icon-192.png",
   "icon-512.png",

@@ -101,6 +101,25 @@
   .mode-card .mode-emoji { font-size: 1.8rem; margin-bottom: 6px; }
   .mode-card h3 { font-family: 'Baloo 2', cursive; margin: 0 0 4px; color: var(--heading); font-size: 1.15rem; }
   .mode-card p { margin: 0; font-weight: 600; font-size: 0.92rem; }
+  .mode-card.quest-card {
+    background: linear-gradient(135deg, #fff6d9, var(--card));
+    outline-color: #e0a92f;
+    border: 3px solid #ffe58a;
+  }
+  .mode-card.quest-card h3 { color: #b8801f; }
+
+  .quest-tag {
+    display: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #8a5a00;
+    background: #fff1c9;
+    border: 1px dashed #e0a92f;
+    padding: 2px 9px;
+    border-radius: 10px;
+    margin-left: 8px;
+  }
+  .quest-tag.show { display: inline-block; }
 
   /* Progress bar */
   .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
@@ -238,11 +257,16 @@
         <h3>Particles</h3>
         <p>Pick the right は・が・を・に・で and more to complete the sentence.</p>
       </button>
+      <button class="mode-card quest-card" onclick="startMode('quest')">
+        <div class="mode-emoji">🗺️</div>
+        <h3>🏆 Quiz Quest</h3>
+        <p>The final challenge! A shuffled mix of katakana, dates, and particles all in one round.</p>
+      </button>
     </div>
   </div>
 
   <div class="card" id="quizCard" style="display:none;">
-    <span class="quiz-mode-tag" id="quizModeTag">Katakana</span>
+    <span class="quiz-mode-tag" id="quizModeTag">Katakana</span><span class="quest-tag" id="questTag"></span>
     <div class="progress-wrap">
       <span class="progress-label" id="progressLabel">Question 1 of 10</span>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -344,7 +368,15 @@ const PARTICLE_BANK = [
   { sentence: "にほんご ___ はなせますか。", romaji: "nihongo ___ hanasemasu ka", translation: "Can you speak Japanese?", answer: "が" },
   { sentence: "うち ___ がっこうまで あるきます。", romaji: "uchi ___ gakkou made arukimasu", translation: "I walk from home to school.", answer: "から" },
   { sentence: "うちから がっこう ___ あるきます。", romaji: "uchikara gakkou ___ arukimasu", translation: "I walk (from home) up to school.", answer: "まで" },
-  { sentence: "これ ___ すきです。", romaji: "kore ___ suki desu", translation: "I like this too.", answer: "も" }
+  { sentence: "これ ___ すきです。", romaji: "kore ___ suki desu", translation: "I like this too.", answer: "も" },
+  { sentence: "ともだち ___ てがみを かきます。", romaji: "tomodachi ___ tegami wo kakimasu", translation: "I write a letter to a friend.", answer: "に" },
+  { sentence: "つくえ ___ うえに ねこが います。", romaji: "tsukue ___ ue ni neko ga imasu", translation: "There is a cat on top of the desk.", answer: "の" },
+  { sentence: "わたし ___ いぬが すきです。", romaji: "watashi ___ inu ga suki desu", translation: "I like dogs.", answer: "は" },
+  { sentence: "なつやすみ ___ りょこうします。", romaji: "natsuyasumi ___ ryokou shimasu", translation: "I travel during summer vacation.", answer: "に" },
+  { sentence: "この ほん ___ おもしろいです。", romaji: "kono hon ___ omoshiroi desu", translation: "This book is interesting.", answer: "は" },
+  { sentence: "だれ ___ きましたか。", romaji: "dare ___ kimashita ka", translation: "Who came?", answer: "が" },
+  { sentence: "びょういん ___ いきます。", romaji: "byouin ___ ikimasu", translation: "I'm going to the hospital.", answer: "へ" },
+  { sentence: "すし ___ たべません。", romaji: "sushi ___ tabemasen", translation: "I don't eat sushi.", answer: "を" }
 ];
 
 // =====================================================================
@@ -370,7 +402,10 @@ function makeChoices(correct, pool) {
 // Question builders — one per review mode
 // =====================================================================
 function buildKatakanaQuestions() {
-  const pickOrder = shuffle(KATAKANA_BANK).slice(0, 16);
+  // Full 46-character set every round (not a subset) so daily practice always
+  // covers everything — just shuffled into a fresh order with fresh wrong-answer
+  // options each time you start this review, so it never feels repetitive.
+  const pickOrder = shuffle(KATAKANA_BANK);
   const romajiPool = KATAKANA_BANK.map(k => k.romaji);
   return pickOrder.map(k => {
     const { choices, answerIndex } = makeChoices(k.romaji, romajiPool);
@@ -381,7 +416,9 @@ function buildKatakanaQuestions() {
       translation: "",
       choices,
       answerIndex,
-      note: `${k.char} is read "${k.romaji}".`
+      note: `${k.char} is read "${k.romaji}".`,
+      category: "Katakana",
+      categoryEmoji: "ア"
     };
   });
 }
@@ -391,9 +428,11 @@ function buildDateQuestions() {
   const others = DATE_BANK.filter(d => !d.weak);
   const pool = [...weak, ...weak, ...others]; // weak days (4th/8th/20th) appear twice as often
   const order = shuffle(pool);
-  const romajiPool = DATE_BANK.map(d => d.romaji);
+  // Answer choices are in hiragana (how a native Japanese kid actually reads these),
+  // not romaji — romaji only shows up afterward, in the explanation note, as a pronunciation aid.
+  const hiraganaPool = DATE_BANK.map(d => d.hiragana);
   return order.map(d => {
-    const { choices, answerIndex } = makeChoices(d.romaji, romajiPool);
+    const { choices, answerIndex } = makeChoices(d.hiragana, hiraganaPool);
     return {
       prompt: `${d.kanji}`,
       promptSmall: true,
@@ -401,7 +440,9 @@ function buildDateQuestions() {
       translation: "",
       choices,
       answerIndex,
-      note: `${d.kanji} (the ${d.day}${ordinalSuffix(d.day)}) is read "${d.hiragana} (${d.romaji})".`
+      note: `${d.kanji} (the ${d.day}${ordinalSuffix(d.day)}) is read "${d.hiragana}" (${d.romaji}).`,
+      category: "Days",
+      categoryEmoji: "📅"
     };
   });
 }
@@ -424,15 +465,27 @@ function buildParticleQuestions() {
       translation: p.translation,
       choices,
       answerIndex,
-      note: `Correct particle: "${p.answer}" — ${p.translation}`
+      note: `Correct particle: "${p.answer}" — ${p.translation}`,
+      category: "Particles",
+      categoryEmoji: "✏️"
     };
   });
+}
+
+function buildQuestQuestions() {
+  // The finale: a shuffled mash-up of all three reviews in one run, so she gets
+  // to show off everything she's learned instead of drilling one thing at a time.
+  const katakanaPart = shuffle(buildKatakanaQuestions()).slice(0, 7);
+  const datesPart = shuffle(buildDateQuestions()).slice(0, 7);
+  const particlesPart = shuffle(buildParticleQuestions()).slice(0, 7);
+  return shuffle([...katakanaPart, ...datesPart, ...particlesPart]);
 }
 
 const MODES = {
   katakana: { label: "Katakana", build: buildKatakanaQuestions },
   dates: { label: "Days of the Month", build: buildDateQuestions },
-  particles: { label: "Particles", build: buildParticleQuestions }
+  particles: { label: "Particles", build: buildParticleQuestions },
+  quest: { label: "🗺️ Quiz Quest", build: buildQuestQuestions }
 };
 
 // =====================================================================
@@ -682,6 +735,14 @@ function loadQuestion() {
   document.getElementById('jpRomajiHint').textContent = q.romajiHint || '';
   document.getElementById('jpTranslation').textContent = q.translation || '';
 
+  const questTag = document.getElementById('questTag');
+  if (currentModeId === 'quest' && q.category) {
+    questTag.textContent = `${q.categoryEmoji} ${q.category}`;
+    questTag.classList.add('show');
+  } else {
+    questTag.classList.remove('show');
+  }
+
   const grid = document.getElementById('choiceGrid');
   grid.innerHTML = q.choices.map((c, i) =>
     `<button class="choice-btn" onclick="selectAnswer(${i})">${c}</button>`
@@ -789,6 +850,7 @@ function finishMode() {
   document.getElementById('progressFill').style.width = '100%';
   document.getElementById('progressLabel').textContent = `Question ${questions.length} of ${questions.length}`;
   document.getElementById('quizBody').style.display = 'none';
+  document.getElementById('questTag').classList.remove('show');
   const endScreen = document.getElementById('endScreen');
   endScreen.classList.add('show');
   const pct = Math.round((modeScore / questions.length) * 100);
@@ -796,9 +858,24 @@ function finishMode() {
   if (pct === 100) { emoji = "🏆"; title = "Perfect score!"; }
   else if (pct >= 70) { emoji = "🌟"; title = "Great job!"; }
   else { emoji = "💪"; title = "Nice try!"; }
+  let message = `You got ${modeScore} out of ${questions.length} correct in ${MODES[currentModeId].label}!`;
+
+  if (currentModeId === 'quest') {
+    // Finishing the whole Quest is the achievement, regardless of score —
+    // she gets a one-of-a-kind medal every time she completes it.
+    emoji = "👑";
+    title = "Quest Complete!";
+    message = `You got ${modeScore} out of ${questions.length} correct — and finished the whole Quiz Quest! 🎉 You earned a special Quest Medal.`;
+    gems.push("🏅");
+    saveGemState();
+    renderGemCase();
+    renderThemeShop();
+    playGemFanfare();
+  }
+
   document.getElementById('endEmoji').textContent = emoji;
   document.getElementById('endTitle').textContent = title;
-  document.getElementById('endMessage').textContent = `You got ${modeScore} out of ${questions.length} correct in ${MODES[currentModeId].label}!`;
+  document.getElementById('endMessage').textContent = message;
   launchConfetti();
 }
 

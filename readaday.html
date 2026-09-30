@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Read a Day</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Math Adventures">
+<meta name="theme-color" content="#4da3e8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #cfe8ff; --pink-deep: #4da3e8; --lav: #dbeeff; --lav-deep: #2f6fb0;
+    --mint: #c8f5e0; --yellow: #eaf6ff; --text: #234b6b; --card: #f5fbff;
+    --good: #45b877; --bad: #ff7a9c; --heading: #1f6fb8; --label: #2f7fd1;
+    --bg1: #eaf8ff; --bg2: #b7e6ff; --bg3: #7cc9f5;
+    --shadow: 0 8px 0 rgba(70, 150, 210, 0.35);
+  }
+  body[data-theme="sunset"] {
+    --pink: #ffe1cf; --pink-deep: #f2935a; --lav: #ffd9ec; --lav-deep: #d1548f;
+    --yellow: #fff1e0; --text: #6b3a23; --card: #fff8f2; --heading: #d1548f; --label: #c76a2e;
+    --bg1: #fff3ea; --bg2: #ffd9b8; --bg3: #ffb488; --shadow: 0 8px 0 rgba(230, 140, 70, 0.35);
+  }
+  body[data-theme="galaxy"] {
+    --pink: #e0d4ff; --pink-deep: #8a5fe0; --lav: #d8c9ff; --lav-deep: #5b3fa8;
+    --yellow: #efe6ff; --text: #33245c; --card: #f7f3ff; --heading: #5b3fa8; --label: #6d4bc7;
+    --bg1: #efe6ff; --bg2: #c9b3f5; --bg3: #8f6fe0; --shadow: 0 8px 0 rgba(140, 100, 220, 0.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 24px 16px 64px;
+    background: radial-gradient(circle at 20% 10%, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%);
+    background-attachment: fixed; color: var(--text); font-family: 'Nunito', sans-serif;
+    position: relative; overflow-x: hidden; transition: background 0.4s ease;
+  }
+  .cloud { position: fixed; background: #ffffff; border-radius: 100px; opacity: 0.92; z-index: 0; pointer-events: none; animation: drift ease-in-out infinite alternate; }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: #ffffff; border-radius: 50%; }
+  .cloud1 { width: 130px; height: 42px; top: 6%; left: 6%; animation-duration: 26s; }
+  .cloud1::before { width: 62px; height: 62px; top: -32px; left: 14px; }
+  .cloud1::after { width: 48px; height: 48px; top: -20px; left: 58px; }
+  .cloud2 { width: 95px; height: 32px; top: 14%; left: 68%; animation-duration: 34s; }
+  .cloud2::before { width: 46px; height: 46px; top: -22px; left: 10px; }
+  .cloud2::after { width: 38px; height: 38px; top: -16px; left: 42px; }
+  .cloud3 { width: 150px; height: 46px; top: 40%; left: -6%; animation-duration: 40s; }
+  .cloud3::before { width: 72px; height: 72px; top: -36px; left: 20px; }
+  .cloud3::after { width: 56px; height: 56px; top: -24px; left: 66px; }
+  .cloud4 { width: 105px; height: 34px; top: 68%; left: 78%; animation-duration: 30s; }
+  .cloud4::before { width: 50px; height: 50px; top: -24px; left: 12px; }
+  .cloud4::after { width: 42px; height: 42px; top: -18px; left: 44px; }
+  .cloud5 { width: 80px; height: 28px; top: 85%; left: 20%; animation-duration: 22s; }
+  .cloud5::before { width: 40px; height: 40px; top: -20px; left: 8px; }
+  .cloud5::after { width: 32px; height: 32px; top: -14px; left: 34px; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(45px); } }
+  body::before {
+    content: "📖 ✨ 🌸 ⭐ 🍡 ✨ 📖 ⭐ 🌸 🍡 ✨ 📖 ⭐";
+    position: fixed; inset: 0; font-size: 22px; letter-spacing: 40px; line-height: 90px;
+    opacity: 0.15; z-index: 0; pointer-events: none; word-break: break-all; overflow: hidden;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+  h1 { font-family: 'Baloo 2', cursive; font-size: 2rem; text-align: center; margin: 0 0 4px; color: var(--heading); text-shadow: 2px 2px 0 #fff; }
+  .subtitle { text-align: center; color: var(--text); font-weight: 600; margin: 0 0 24px; }
+  .back-link { display: inline-block; margin-bottom: 14px; color: var(--heading); font-weight: 700; text-decoration: none; font-family: 'Baloo 2', cursive; }
+  .back-link:hover { text-decoration: underline; }
+  .mascot-row { text-align: center; font-size: 2.4rem; margin-bottom: 10px; }
+  .card { background: var(--card); border: 3px solid #fff; outline: 3px solid var(--pink-deep); border-radius: 26px; padding: 26px 24px 30px; margin-bottom: 22px; box-shadow: var(--shadow); }
+  .card h2 { font-family: 'Baloo 2', cursive; font-size: 1.3rem; margin: 0 0 12px; color: var(--label); }
+  p { margin: 0 0 10px; }
+
+  .streak-banner {
+    text-align: center; font-family: 'Baloo 2', cursive; font-size: 1.1rem; color: #b8801f;
+    background: #fff6d9; border: 2px dashed #e0a92f; border-radius: 16px; padding: 10px; margin-bottom: 18px;
+  }
+
+  .date-tag {
+    display: inline-block; font-size: 0.8rem; font-weight: 700; color: var(--label);
+    background: var(--lav); padding: 3px 10px; border-radius: 10px; margin-bottom: 12px;
+  }
+
+  .story-box {
+    background: var(--yellow); border: 2px dashed var(--pink-deep); border-radius: 18px;
+    padding: 18px 20px; margin-bottom: 16px;
+  }
+  .story-line {
+    font-family: 'Noto Sans JP', 'Baloo 2', sans-serif;
+    font-size: 1.7rem; font-weight: 700; color: var(--heading); line-height: 1.8; margin: 0;
+  }
+  .story-romaji { font-size: 0.85rem; color: var(--label); font-weight: 600; margin-top: 6px; margin-bottom: 0; }
+
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 480px) { .choice-grid { grid-template-columns: 1fr; } }
+  .choice-btn {
+    appearance: none; border: none; background: linear-gradient(180deg, #8ec9ff, var(--pink-deep));
+    color: #7a2f57; font-family: 'Nunito', sans-serif; font-size: 1.02rem; font-weight: 700;
+    padding: 14px 12px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 0 var(--heading);
+  }
+  .choice-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--heading); }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct { background: linear-gradient(180deg, #8de8b0, var(--good)); color: #14512c; box-shadow: 0 4px 0 #2e7d4f; }
+  .choice-btn.incorrect { background: linear-gradient(180deg, #ffb0c2, var(--bad)); color: #6b1230; box-shadow: 0 4px 0 #c23a5c; }
+  .choice-btn.dim { opacity: 0.55; }
+
+  .quiz-note {
+    background: var(--lav); border: 2px dashed var(--lav-deep); border-radius: 14px;
+    padding: 12px 14px; margin-top: 6px; margin-bottom: 14px; font-size: 0.92rem; color: var(--text);
+    display: none; animation: fadeInSoft 0.3s ease;
+  }
+  .quiz-note.show { display: block; }
+  @keyframes fadeInSoft { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .already-done {
+    text-align: center; display: none;
+  }
+  .already-done.show { display: block; }
+  .already-done .big { font-size: 2.6rem; margin-bottom: 8px; }
+
+  button {
+    appearance: none; border: none; background: linear-gradient(180deg, #8ec9ff, var(--pink-deep));
+    color: #7a2f57; font-family: 'Baloo 2', cursive; font-size: 1.05rem; font-weight: 700;
+    padding: 12px 22px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 0 var(--heading);
+  }
+  button:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--heading); }
+  button.secondary { background: linear-gradient(180deg, #dbeeff, var(--lav-deep)); box-shadow: 0 4px 0 #1f5e9c; color: #163a5c; }
+  button.secondary:active { box-shadow: 0 2px 0 #1f5e9c; }
+
+  footer { text-align: center; color: var(--label); font-size: 0.85rem; margin-top: 28px; font-weight: 600; }
+
+  .gem-hint { font-size: 0.9rem; color: var(--lav-deep); margin-bottom: 14px; }
+  .gem-case { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; padding: 10px; background: var(--lav); border-radius: 14px; border: 2px dashed var(--lav-deep); margin-bottom: 12px; }
+  .gem-case .gem { font-size: 1.6rem; animation: gemIn 0.3s ease; }
+  @keyframes gemIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .gem-placeholder { font-size: 0.85rem; color: var(--lav-deep); font-weight: 600; align-self: center; }
+  .collection-stats { font-size: 0.9rem; font-weight: 700; color: var(--label); margin: 0; }
+
+  .shop-divider { height: 2px; background: repeating-linear-gradient(90deg, var(--lav-deep) 0 8px, transparent 8px 16px); opacity: 0.5; margin: 18px 0 16px; }
+  .theme-shop { display: flex; flex-wrap: wrap; gap: 12px; }
+  .theme-swatch {
+    flex: 1; min-width: 110px; border-radius: 16px; padding: 12px 10px; text-align: center;
+    border: 3px solid transparent; cursor: pointer; font-weight: 700; font-size: 0.85rem;
+    color: var(--text); background: var(--card); box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+  }
+  .theme-swatch:active { transform: translateY(2px); box-shadow: none; }
+  .theme-swatch.active { border-color: var(--good); }
+  .theme-swatch.locked { opacity: 0.85; }
+  .theme-swatch .swatch-preview { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+  .theme-swatch .swatch-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
+  .theme-swatch .swatch-cost { display: block; margin-top: 4px; font-size: 0.78rem; font-weight: 600; opacity: 0.85; }
+
+  .gem-banner { background: var(--yellow); border: 2px dashed var(--pink-deep); border-radius: 14px; padding: 10px 12px; margin-bottom: 16px; }
+  .gem-banner .gem-earned { font-size: 2.2rem; animation: gemIn 0.4s ease; }
+  .gem-banner p { margin: 4px 0 0; font-weight: 700; font-size: 0.9rem; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(140, 80, 130, 0.35); display: none; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
+  .overlay.show { display: flex; }
+  .modal { background: var(--card); border-radius: 28px; border: 4px solid var(--pink-deep); padding: 32px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 12px 0 rgba(70,150,210,0.4); animation: pop 0.35s ease; }
+  @keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+  .modal .big-emoji { font-size: 3.2rem; margin-bottom: 8px; display: inline-block; animation: bounceEmoji 0.7s ease infinite; }
+  @keyframes bounceEmoji { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(4deg); } }
+  .modal h3 { font-family: 'Baloo 2', cursive; color: var(--heading); font-size: 1.5rem; margin: 0 0 6px; }
+  .modal p { color: var(--text); font-weight: 600; margin-bottom: 18px; }
+
+  .confetti { position: fixed; top: -20px; font-size: 1.4rem; z-index: 60; animation: fall linear forwards; pointer-events: none; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(360deg); opacity: 0.9; } }
+</style>
+</head>
+<body>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+<div class="cloud cloud4"></div>
+<div class="cloud cloud5"></div>
+<div class="wrap">
+  <a href="index.html" class="back-link">← All Topics</a>
+  <div class="mascot-row">📖🌸✨🍡🐰</div>
+  <h1>Read a Day!</h1>
+  <p class="subtitle">One tiny Japanese story a day — read it, then guess what it's about.</p>
+
+  <div class="streak-banner" id="streakBanner"></div>
+
+  <div class="card">
+    <div class="date-tag" id="dateTag"></div>
+    <h2>📖 Today's Story</h2>
+
+    <div id="storyBody">
+      <div class="story-box">
+        <p class="story-line" id="storyLine1"></p>
+        <p class="story-romaji" id="storyRomaji1"></p>
+        <p class="story-line" id="storyLine2"></p>
+        <p class="story-romaji" id="storyRomaji2"></p>
+      </div>
+      <p><strong>What is the story about?</strong></p>
+      <div class="choice-grid" id="choiceGrid"></div>
+      <div class="quiz-note" id="quizNote"></div>
+    </div>
+
+    <div class="already-done" id="alreadyDone">
+      <div class="big">✅</div>
+      <h2>You already read today's story!</h2>
+      <p id="alreadyDoneMessage"></p>
+      <button class="secondary" onclick="showStoryAgain()">Read it again</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎒 My Gem Collection</h2>
+    <p class="gem-hint">Every day you read counts! (Shared across every topic.)</p>
+    <div class="gem-case" id="gemCase"></div>
+    <p class="collection-stats">Gems collected: <span id="gemCount">0</span> &nbsp;|&nbsp; Best streak: <span id="bestStreak">0</span> 🔥</p>
+
+    <div class="shop-divider"></div>
+    <h2>🎨 Theme Shop</h2>
+    <p class="gem-hint">Spend gems to unlock a new look for the whole site!</p>
+    <div class="theme-shop" id="themeShop"></div>
+  </div>
+
+  <footer>Made with 💙 for language adventurers everywhere.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="big-emoji" id="modalEmoji">🎉</div>
+    <h3 id="modalTitle">Yay!</h3>
+    <p id="modalMessage"></p>
+    <div class="gem-banner" id="gemBanner" style="display:none;">
+      <div class="gem-earned" id="gemEarnedIcon">💎</div>
+      <p id="gemBannerText">You earned a gem!</p>
+    </div>
+    <button onclick="closeCelebration()">Nice!</button>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// Story bank — 2-sentence hiragana stories with an English comprehension
+// question. Kept to hiragana only (no kanji) since even real Japanese
+// first-graders start school reading almost entirely in hiragana.
+// =====================================================================
+const STORY_BANK = [
+  { lines: ["ねこが いすの うえに います。", "ねこは ねむそうです。"],
+    romaji: ["neko ga isu no ue ni imasu.", "neko wa nemusou desu."],
+    question: "What is the cat doing?",
+    choices: ["Sleeping / resting", "Eating dinner", "Swimming", "Singing a song"],
+    answerIndex: 0,
+    translation: "The cat is on the chair. The cat looks sleepy." },
+
+  { lines: ["きょうは あめです。", "わたしは かさを もって います。"],
+    romaji: ["kyou wa ame desu.", "watashi wa kasa wo motte imasu."],
+    question: "What is the weather like today?",
+    choices: ["Sunny", "Snowy", "Rainy", "Windy"],
+    answerIndex: 2,
+    translation: "Today it is raining. I am holding an umbrella." },
+
+  { lines: ["いぬが こうえんで はしって います。", "とても たのしそうです。"],
+    romaji: ["inu ga kouen de hashitte imasu.", "totemo tanoshisou desu."],
+    question: "Where is the dog?",
+    choices: ["At the park", "At school", "In the kitchen", "At the beach"],
+    answerIndex: 0,
+    translation: "The dog is running in the park. It looks very happy." },
+
+  { lines: ["わたしは あさごはんに たまごを たべます。", "ぎゅうにゅうも のみます。"],
+    romaji: ["watashi wa asagohan ni tamago wo tabemasu.", "gyuunyuu mo nomimasu."],
+    question: "What does the person eat for breakfast?",
+    choices: ["Rice and fish", "Egg and milk", "Bread and juice", "Soup"],
+    answerIndex: 1,
+    translation: "I eat eggs for breakfast. I also drink milk." },
+
+  { lines: ["おとうとは おおきい ボールで あそんで います。", "とても げんきです。"],
+    romaji: ["otouto wa ookii booru de asonde imasu.", "totemo genki desu."],
+    question: "What is the little brother playing with?",
+    choices: ["A book", "A big ball", "A toy car", "A kite"],
+    answerIndex: 1,
+    translation: "My little brother is playing with a big ball. He is very energetic." },
+
+  { lines: ["きょうは あついです。", "わたしたちは プールで およぎます。"],
+    romaji: ["kyou wa atsui desu.", "watashitachi wa puuru de oyogimasu."],
+    question: "What are they going to do?",
+    choices: ["Sleep", "Swim", "Read", "Cook"],
+    answerIndex: 1,
+    translation: "Today it is hot. We are going to swim in the pool." },
+
+  { lines: ["とりが きの うえで うたって います。", "こえが とても きれいです。"],
+    romaji: ["tori ga ki no ue de utatte imasu.", "koe ga totemo kirei desu."],
+    question: "What is the bird doing?",
+    choices: ["Flying away", "Sleeping", "Singing", "Eating"],
+    answerIndex: 2,
+    translation: "The bird is singing in the tree. Its voice is very pretty." },
+
+  { lines: ["ゆきが たくさん ふって います。", "こどもたちは ゆきだるまを つくります。"],
+    romaji: ["yuki ga takusan futte imasu.", "kodomotachi wa yukidaruma wo tsukurimasu."],
+    question: "What are the children making?",
+    choices: ["A sandcastle", "A snowman", "A kite", "A cake"],
+    answerIndex: 1,
+    translation: "A lot of snow is falling. The children are making a snowman." },
+
+  { lines: ["おばあちゃんは クッキーを やきます。", "いえの なかは いい においです。"],
+    romaji: ["obaachan wa kukkii wo yakimasu.", "ie no naka wa ii nioi desu."],
+    question: "What is grandma baking?",
+    choices: ["Bread", "Cookies", "A cake", "Pizza"],
+    answerIndex: 1,
+    translation: "Grandma is baking cookies. The house smells nice." },
+
+  { lines: ["うみで さかなが およいで います。", "いろは あおと きいろです。"],
+    romaji: ["umi de sakana ga oyoide imasu.", "iro wa ao to kiiro desu."],
+    question: "What colors is the fish?",
+    choices: ["Red and black", "Blue and yellow", "Green and pink", "White and brown"],
+    answerIndex: 1,
+    translation: "A fish is swimming in the sea. Its colors are blue and yellow." },
+
+  { lines: ["わたしは がっこうで ほんを よみます。", "おはなしは とても おもしろいです。"],
+    romaji: ["watashi wa gakkou de hon wo yomimasu.", "ohanashi wa totemo omoshiroi desu."],
+    question: "Where does the person read a book?",
+    choices: ["At home", "At school", "At the park", "In the car"],
+    answerIndex: 1,
+    translation: "I read a book at school. The story is very interesting." },
+
+  { lines: ["うさぎが はたけで にんじんを たべて います。", "とても おいしそうです。"],
+    romaji: ["usagi ga hatake de ninjin wo tabete imasu.", "totemo oishisou desu."],
+    question: "What is the rabbit eating?",
+    choices: ["Cabbage", "Carrot", "Apple", "Grass"],
+    answerIndex: 1,
+    translation: "A rabbit is eating a carrot in the field. It looks very delicious." },
+
+  { lines: ["きょうだいは いっしょに じてんしゃに のります。", "とても はやいです。"],
+    romaji: ["kyoudai wa issho ni jitensha ni norimasu.", "totemo hayai desu."],
+    question: "What are the siblings riding?",
+    choices: ["A bus", "A bicycle", "A boat", "A train"],
+    answerIndex: 1,
+    translation: "The siblings ride a bicycle together. It is very fast." },
+
+  { lines: ["ようちえんで こどもたちが うたを うたいます。", "せんせいも いっしょに うたいます。"],
+    romaji: ["youchien de kodomotachi ga uta wo utaimasu.", "sensei mo issho ni utaimasu."],
+    question: "Where are the children singing?",
+    choices: ["At the hospital", "At kindergarten", "At the store", "At the zoo"],
+    answerIndex: 1,
+    translation: "At kindergarten, the children sing a song. The teacher sings together too." },
+
+  { lines: ["あきに はの いろが あかや きいろに なります。", "とても きれいです。"],
+    romaji: ["aki ni ha no iro ga aka ya kiiro ni narimasu.", "totemo kirei desu."],
+    question: "What season is being described?",
+    choices: ["Spring", "Summer", "Autumn", "Winter"],
+    answerIndex: 2,
+    translation: "In autumn, the leaves turn red and yellow. It is very beautiful." },
+
+  { lines: ["ぞうさんが みずを のみに いきます。", "おおきい はなが ながいです。"],
+    romaji: ["zou-san ga mizu wo nomi ni ikimasu.", "ookii hana ga nagai desu."],
+    question: "What animal is in the story?",
+    choices: ["A giraffe", "An elephant", "A lion", "A monkey"],
+    answerIndex: 1,
+    translation: "The elephant goes to drink water. Its big nose (trunk) is long." },
+
+  { lines: ["わたしは よるに ほしを みます。", "そらは くらくて しずかです。"],
+    romaji: ["watashi wa yoru ni hoshi wo mimasu.", "sora wa kurakute shizuka desu."],
+    question: "What is the person looking at?",
+    choices: ["The sun", "The stars", "Birds", "Clouds"],
+    answerIndex: 1,
+    translation: "I look at the stars at night. The sky is dark and quiet." },
+
+  { lines: ["おかあさんと わたしは スーパーで くだものを かいます。", "りんごと バナナを かいました。"],
+    romaji: ["okaasan to watashi wa suupaa de kudamono wo kaimasu.", "ringo to banana wo kaimashita."],
+    question: "What did they buy?",
+    choices: ["Vegetables", "Fruit", "Bread", "Toys"],
+    answerIndex: 1,
+    translation: "Mom and I buy fruit at the supermarket. We bought apples and bananas." }
+];
+
+// =====================================================================
+// Pick today's story deterministically, so it's the same story all day
+// and automatically changes tomorrow.
+// =====================================================================
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function dayOfYear() {
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 0);
+  const diff = d - start;
+  return Math.floor(diff / 86400000);
+}
+function getTodayStory() {
+  const idx = dayOfYear() % STORY_BANK.length;
+  return STORY_BANK[idx];
+}
+
+// =====================================================================
+// Shared gem/theme engine (identical to every other topic page, so
+// gems and themes stay unified site-wide) + a daily reading streak.
+// =====================================================================
+let gems = [];
+let bestStreak = 0;
+let ownedThemes = ["sky"];
+let activeTheme = "sky";
+let readingStreak = 0;
+let lastReadDate = null;
+let answeredToday = false;
+
+const GEM_TYPES = ["💎", "🌟", "🦄", "🎀", "🍭", "🌈", "🍀", "💠", "🧸", "⭐"];
+const STORAGE_KEY = "distanceQuizGemCollection";
+
+const THEMES = [
+  { id: "sky", label: "Sky Blue", cost: 0, dots: ["#4da3e8", "#2f6fb0"] },
+  { id: "sunset", label: "Sunset", cost: 5, dots: ["#f2935a", "#d1548f"] },
+  { id: "galaxy", label: "Galaxy", cost: 10, dots: ["#8a5fe0", "#5b3fa8"] }
+];
+
+function loadGemState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      gems = Array.isArray(data.gems) ? data.gems : [];
+      bestStreak = Number(data.bestStreak) || 0;
+      ownedThemes = Array.isArray(data.ownedThemes) && data.ownedThemes.length ? data.ownedThemes : ["sky"];
+      activeTheme = typeof data.activeTheme === "string" ? data.activeTheme : "sky";
+      readingStreak = Number(data.readingStreak) || 0;
+      lastReadDate = typeof data.lastReadDate === "string" ? data.lastReadDate : null;
+    }
+  } catch (e) {
+    gems = []; bestStreak = 0; ownedThemes = ["sky"]; activeTheme = "sky"; readingStreak = 0; lastReadDate = null;
+  }
+  renderGemCase();
+  applyTheme(activeTheme);
+  renderThemeShop();
+  renderStreakBanner();
+}
+
+function saveGemState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ gems, bestStreak, ownedThemes, activeTheme, readingStreak, lastReadDate }));
+  } catch (e) { /* storage unavailable, ignore */ }
+}
+
+function renderGemCase() {
+  const caseEl = document.getElementById('gemCase');
+  const countEl = document.getElementById('gemCount');
+  const bestEl = document.getElementById('bestStreak');
+  if (!caseEl) return;
+  caseEl.innerHTML = gems.length
+    ? gems.map(g => `<span class="gem">${g}</span>`).join('')
+    : '<span class="gem-placeholder">No gems yet — your collection starts here! ✨</span>';
+  countEl.textContent = gems.length;
+  bestEl.textContent = bestStreak;
+}
+
+function pickRandomGem() { return GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)]; }
+function applyTheme(id) { document.body.setAttribute('data-theme', id); }
+
+function renderThemeShop() {
+  const shop = document.getElementById('themeShop');
+  if (!shop) return;
+  shop.innerHTML = THEMES.map(theme => {
+    const owned = ownedThemes.includes(theme.id);
+    const isActive = activeTheme === theme.id;
+    const dots = theme.dots.map(c => `<span class="swatch-dot" style="background:${c}"></span>`).join('');
+    const costLine = owned ? (isActive ? "✓ Wearing this!" : "Tap to wear") : `🔒 ${theme.cost} gems`;
+    const classes = ["theme-swatch", isActive ? "active" : "", owned ? "" : "locked"].filter(Boolean).join(" ");
+    return `<div class="${classes}" onclick="handleThemeClick('${theme.id}')">
+      <div class="swatch-preview">${dots}</div>
+      ${theme.label}
+      <span class="swatch-cost">${costLine}</span>
+    </div>`;
+  }).join('');
+}
+
+function handleThemeClick(id) {
+  const theme = THEMES.find(t => t.id === id);
+  if (!theme) return;
+  if (ownedThemes.includes(id)) {
+    activeTheme = id; applyTheme(id); saveGemState(); renderThemeShop(); return;
+  }
+  if (gems.length >= theme.cost) {
+    gems = gems.slice(theme.cost);
+    ownedThemes.push(id);
+    activeTheme = id;
+    applyTheme(id);
+    saveGemState();
+    renderGemCase();
+    renderThemeShop();
+  }
+}
+
+function renderStreakBanner() {
+  const el = document.getElementById('streakBanner');
+  if (readingStreak >= 2) {
+    el.textContent = `🔥 ${readingStreak}-day reading streak! Keep it going!`;
+    el.style.display = 'block';
+  } else if (readingStreak === 1) {
+    el.textContent = `🌱 You've started your reading streak — come back tomorrow!`;
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function playChime() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.3);
+      t += 0.13;
+    });
+  } catch (e) { /* ignore */ }
+}
+
+function playGemFanfare() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+    let t = ctx.currentTime;
+    notes.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.3, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.34);
+      t += 0.11;
+    });
+  } catch (e) { /* ignore */ }
+}
+
+function launchConfetti() {
+  const pieces = ["📖", "💙", "⭐", "☁️", "✨", "🎉"];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+// =====================================================================
+// Page flow
+// =====================================================================
+let todayStory = null;
+
+function initPage() {
+  todayStory = getTodayStory();
+  const key = todayKey();
+  document.getElementById('dateTag').textContent = key;
+
+  if (lastReadDate === key) {
+    showAlreadyDoneScreen();
+  } else {
+    renderStory(true);
+  }
+}
+
+function renderStory(interactive) {
+  document.getElementById('storyBody').style.display = 'block';
+  document.getElementById('alreadyDone').classList.remove('show');
+
+  document.getElementById('storyLine1').textContent = todayStory.lines[0];
+  document.getElementById('storyRomaji1').textContent = todayStory.romaji[0];
+  document.getElementById('storyLine2').textContent = todayStory.lines[1];
+  document.getElementById('storyRomaji2').textContent = todayStory.romaji[1];
+
+  const grid = document.getElementById('choiceGrid');
+  const note = document.getElementById('quizNote');
+  note.textContent = '';
+  note.classList.remove('show');
+
+  if (interactive) {
+    answeredToday = false;
+    grid.style.display = 'grid';
+    grid.innerHTML = todayStory.choices.map((c, i) =>
+      `<button class="choice-btn" onclick="selectAnswer(${i})">${c}</button>`
+    ).join('');
+  } else {
+    // "Read it again" mode: just show the story + translation, no re-scoring
+    grid.style.display = 'none';
+    note.textContent = `Translation: ${todayStory.translation}`;
+    note.classList.add('show');
+  }
+}
+
+function showStoryAgain() {
+  renderStory(false);
+}
+
+function showAlreadyDoneScreen() {
+  document.getElementById('storyBody').style.display = 'none';
+  const already = document.getElementById('alreadyDone');
+  already.classList.add('show');
+  document.getElementById('alreadyDoneMessage').textContent =
+    `Come back tomorrow for a brand new story! Your reading streak is ${readingStreak} day${readingStreak === 1 ? '' : 's'}.`;
+}
+
+function selectAnswer(i) {
+  if (answeredToday) return;
+  answeredToday = true;
+  const buttons = document.querySelectorAll('#choiceGrid .choice-btn');
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === todayStory.answerIndex) btn.classList.add('correct');
+    else if (idx === i) btn.classList.add('incorrect');
+    else btn.classList.add('dim');
+  });
+
+  const note = document.getElementById('quizNote');
+  note.textContent = `Translation: ${todayStory.translation}`;
+  note.classList.add('show');
+
+  markTodayComplete(i === todayStory.answerIndex);
+}
+
+function markTodayComplete(wasCorrect) {
+  const key = todayKey();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+  if (lastReadDate === yKey) {
+    readingStreak += 1;
+  } else if (lastReadDate !== key) {
+    readingStreak = 1;
+  }
+  lastReadDate = key;
+  if (readingStreak > bestStreak) bestStreak = readingStreak;
+
+  // Showing up to read counts, whether or not the guess was right —
+  // the daily habit is the goal, not a perfect score.
+  const gemAwarded = pickRandomGem();
+  gems.push(gemAwarded);
+  saveGemState();
+  renderGemCase();
+  renderThemeShop();
+  renderStreakBanner();
+
+  showCelebration(wasCorrect, gemAwarded);
+}
+
+function showCelebration(wasCorrect, gemAwarded) {
+  playGemFanfare();
+  document.getElementById('modalEmoji').textContent = wasCorrect ? "🎉" : "📖";
+  document.getElementById('modalTitle').textContent = wasCorrect ? "You got it!" : "Nice reading!";
+  document.getElementById('modalMessage').textContent = wasCorrect
+    ? "Great comprehension! You understood the story."
+    : "Good try! Reading a little every day is what makes you better — check the translation above.";
+  document.getElementById('gemEarnedIcon').textContent = gemAwarded;
+  document.getElementById('gemBannerText').textContent = `+1 gem for reading today! (${readingStreak}-day streak)`;
+  document.getElementById('gemBanner').style.display = 'block';
+  document.getElementById('overlay').classList.add('show');
+  launchConfetti();
+}
+
+function closeCelebration() {
+  document.getElementById('overlay').classList.remove('show');
+  showAlreadyDoneScreen();
+}
+
+loadGemState();
+initPage();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* offline caching unavailable, ignore */ });
+    });
+  }
+</script>
+</body>
+</html>
